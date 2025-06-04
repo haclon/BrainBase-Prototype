@@ -1,0 +1,3070 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainBase - {{PAGE_TITLE}}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 通用样式 */
+        .gitee-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e1e4e8;
+            height: 60px;
+            z-index: 25000;
+        }
+        .gitee-sidebar {
+            background: rgba(248, 249, 250, 0.95);
+            width: 80px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            overflow-y: auto;
+            overflow-x: visible;
+            position: fixed;
+            left: 0;
+            top: 60px;
+            max-height: calc(100vh - 60px);
+            height: calc(100vh - 60px);
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 2px 12px rgba(108, 117, 125, 0.08);
+            z-index: 50;
+            transform: translateX(0);
+        }
+        .gitee-sidebar:hover {
+            width: 200px;
+        }
+        .gitee-sidebar.sidebar-hidden {
+            transform: translateX(-100%);
+        }
+        .gitee-sidebar.sidebar-open {
+            transform: translateX(0);
+        }
+        .gitee-sidebar::-webkit-scrollbar {
+            width: 0px;
+            transition: width 0.3s ease;
+        }
+        .gitee-sidebar:hover::-webkit-scrollbar {
+            width: 4px;
+            position: absolute;
+            right: 26px;
+        }
+        .gitee-sidebar::-webkit-scrollbar-track {
+            background: rgba(248, 249, 250, 0.8);
+            border-radius: 2px;
+        }
+        .gitee-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(108, 117, 125, 0.4);
+            border-radius: 2px;
+        }
+        .gitee-sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(108, 117, 125, 0.6);
+        }
+        .gitee-content {
+            background: #ffffff;
+            min-height: calc(100vh - 60px);
+            margin-left: 80px;
+            transition: margin-left 0.3s ease;
+            width: calc(100% - 80px);
+        }
+        .gitee-content.sidebar-hidden {
+            margin-left: 0;
+            width: 100%;
+        }
+        .gitee-nav-item {
+            color: #6c757d;
+            padding: 6px 0;
+            border-radius: 8px;
+            margin: 1px 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            font-size: 12px;
+            text-decoration: none;
+            position: relative;
+            overflow: visible;
+            width: 50px;
+            height: auto;
+            justify-content: center;
+            opacity: 1;
+            transform: scale(1);
+        }
+        .gitee-nav-item i {
+            font-size: 18px;
+            margin-bottom: 2px;
+            margin-right: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 2;
+        }
+        .gitee-nav-item:hover i {
+            transform: scale(1.15);
+            color: #007bff;
+        }
+        .gitee-nav-item .nav-text {
+            opacity: 1;
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.1;
+            margin-top: 1px;
+            transition: opacity 0.3s ease;
+            display: block;
+        }
+        .gitee-nav-item .nav-text-full {
+            position: absolute;
+            left: 68px;
+            top: 50%;
+            transform: translateY(-50%) translateX(-8px);
+            opacity: 0;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.2;
+            white-space: nowrap;
+            color: #495057;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 4px 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(222, 226, 230, 0.8);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 100;
+            pointer-events: none;
+            backdrop-filter: blur(8px);
+        }
+        .gitee-sidebar:hover .gitee-nav-item .nav-text-full {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+            pointer-events: auto;
+        }
+        .gitee-nav-item:hover .nav-text-full {
+            font-size: 16px;
+            font-weight: 500;
+            color: #007bff;
+            background: rgba(227, 242, 253, 0.95);
+            border-color: #007bff;
+            box-shadow: 0 4px 16px rgba(0, 123, 255, 0.2);
+        }
+        .sidebar-background-extension {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50px;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(248, 249, 250, 0.4) 0%, rgba(233, 236, 239, 0.4) 100%);
+            border-right: 2px solid rgba(222, 226, 230, 0.5);
+            border-radius: 0 12px 12px 0;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 1;
+            box-shadow: 0 2px 8px rgba(108, 117, 125, 0.1);
+        }
+        
+        /* 通用按钮样式 */
+        .gitee-btn {
+            background: #007bff;
+            color: #ffffff;
+            border: 1px solid #007bff;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 14px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .gitee-btn:hover {
+            background: #0056b3;
+            border-color: #004085;
+        }
+        .gitee-btn-outline {
+            background: transparent;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .gitee-btn-outline:hover {
+            background: #f6f8fa;
+            border-color: #586069;
+        }
+        .gitee-btn-danger {
+            background: #dc3545;
+            color: #ffffff;
+            border: 1px solid #dc3545;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .gitee-btn-danger:hover {
+            background: #c82333;
+            border-color: #bd2130;
+        }
+        
+        /* 设备模拟切换按钮样式 */
+        .device-simulator-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .device-simulator-toggle {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #6c757d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        
+        .device-simulator-toggle:hover {
+            background: #f8f9fa;
+            border-color: #007bff;
+            color: #007bff;
+            transform: scale(1.05);
+        }
+        
+        .device-simulator-toggle i {
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .device-simulator-toggle:hover i {
+            transform: scale(1.1);
+        }
+        
+        /* 设备选择下拉菜单 */
+        .device-selector-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 320px;
+            max-height: 480px;
+            background: white;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            margin-top: 8px;
+        }
+        
+        .device-selector-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .device-category {
+            border-bottom: 1px solid #f1f3f4;
+        }
+        
+        .device-category:last-child {
+            border-bottom: none;
+        }
+        
+        .device-category-title {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            color: #495057;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .device-category-title i {
+            color: #6c757d;
+        }
+        
+        .device-list {
+            padding: 8px 0;
+        }
+        
+        .device-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid transparent;
+        }
+        
+        .device-item:hover {
+            background: #f8f9fa;
+            border-left-color: #007bff;
+        }
+        
+        .device-item.active {
+            background: #e3f2fd;
+            border-left-color: #007bff;
+        }
+        
+        .device-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #212529;
+        }
+        
+        .device-specs {
+            font-size: 12px;
+            color: #6c757d;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .device-item:hover .device-name {
+            color: #007bff;
+        }
+        
+        .device-item:hover .device-specs {
+            color: #495057;
+        }
+        
+        /* 页面模拟容器 */
+        .page-simulator-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f0f2f5;
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .page-simulator-container.active {
+            display: flex;
+        }
+        
+        /* 设备控制按钮 - 只在模拟器激活时显示 */
+        .device-controls {
+            position: absolute;
+            top: 50%;
+            right: -60px;
+            transform: translateY(-50%);
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1001;
+        }
+        
+        .page-simulator-container.active .device-controls {
+            display: flex;
+        }
+        
+        /* 设备信息 - 只在模拟器激活时显示 */
+        .device-info {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1001;
+            display: none;
+            white-space: nowrap;
+        }
+        
+        .page-simulator-container.active .device-info {
+            display: block;
+        }
+        
+        .device-frame {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        
+        .device-frame.mobile {
+            width: 375px;
+            height: 667px;
+        }
+        
+        .device-frame.tablet {
+            width: 768px;
+            height: 1024px;
+        }
+        
+        .device-frame.desktop {
+            width: 90%;
+            height: 90%;
+            max-width: 1440px;
+            max-height: 900px;
+        }
+        
+        .device-screen {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+        
+        .device-control-btn {
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #495057;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .device-control-btn:hover {
+            background: rgba(0, 123, 255, 0.95);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 20px rgba(0, 123, 255, 0.3);
+        }
+        
+        .device-control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* 控制按钮工具提示 */
+        .device-control-btn {
+            position: relative;
+        }
+        
+        .device-control-btn::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 1002;
+        }
+        
+        .device-control-btn:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-2px);
+        }
+        
+        /* 设备模拟模式状态指示 */
+        .device-simulator-indicator {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #28a745;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .device-simulator-button.active .device-simulator-indicator {
+            opacity: 1;
+        }
+        
+        /* 设备模拟样式覆盖 */
+        .device-mode-mobile * {
+            box-sizing: border-box;
+        }
+        
+        .device-mode-mobile .gitee-sidebar {
+            position: fixed !important;
+            left: 0 !important;
+            top: auto !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            height: 80px !important;
+            max-height: 80px !important;
+            transform: translateX(0) !important;
+            background: rgba(248, 249, 250, 0.98) !important;
+            backdrop-filter: blur(10px) !important;
+            border-radius: 0 !important;
+            border-top: 1px solid rgba(222, 226, 230, 0.8) !important;
+            box-shadow: 0 -2px 20px rgba(108, 117, 125, 0.15) !important;
+            z-index: 100 !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+        }
+        
+        .device-mode-mobile .gitee-sidebar .py-4 {
+            padding: 8px 12px !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 100% !important;
+            gap: 8px !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+        }
+        
+        .device-mode-mobile .gitee-sidebar .gitee-nav-item {
+            width: 60px !important;
+            height: 60px !important;
+            min-width: 60px !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+            padding: 6px 4px !important;
+            margin: 0 !important;
+            text-align: center !important;
+            border-radius: 8px !important;
+            flex-shrink: 0 !important;
+        }
+        
+        .device-mode-mobile .gitee-sidebar .gitee-nav-item i {
+            font-size: 18px !important;
+            margin-right: 0 !important;
+            margin-bottom: 2px !important;
+        }
+        
+        .device-mode-mobile .gitee-sidebar .gitee-nav-item .nav-text {
+            font-size: 10px !important;
+            font-weight: 500 !important;
+            line-height: 1 !important;
+            white-space: nowrap !important;
+            display: block !important;
+            opacity: 1 !important;
+        }
+        
+        .device-mode-mobile .gitee-sidebar .gitee-nav-item .nav-text-full {
+            display: none !important;
+        }
+        
+        .device-mode-mobile .gitee-sidebar .sidebar-background-extension {
+            display: none !important;
+        }
+        
+        .device-mode-mobile .gitee-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+            margin-bottom: 80px !important;
+        }
+        
+        .device-mode-mobile .notification-container {
+            bottom: 90px !important;
+        }
+        
+        /* 平板模式样式 */
+        .device-mode-tablet .gitee-sidebar {
+            position: fixed !important;
+            left: 0 !important;
+            top: 60px !important;
+            z-index: 50 !important;
+            width: 200px !important;
+            height: calc(100vh - 60px) !important;
+            transform: translateX(-100%) !important;
+            transition: transform 0.3s ease-in-out !important;
+            background: rgba(248, 249, 250, 0.95) !important;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .device-mode-tablet .gitee-sidebar.mobile-open {
+            transform: translateX(0) !important;
+        }
+        
+        .device-mode-tablet .gitee-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+        
+        .device-mode-tablet .gitee-nav-item {
+            width: auto !important;
+            flex-direction: row !important;
+            justify-content: flex-start !important;
+            padding: 12px 20px !important;
+            margin: 2px 10px !important;
+            text-align: left !important;
+        }
+        
+        .device-mode-tablet .gitee-nav-item i {
+            font-size: 16px !important;
+            margin-right: 12px !important;
+            margin-bottom: 0 !important;
+        }
+        
+        .device-mode-tablet .gitee-nav-item .nav-text {
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            opacity: 1 !important;
+            display: block !important;
+        }
+        
+        .device-mode-tablet .gitee-nav-item .nav-text-full {
+            display: none !important;
+        }
+        
+        .device-mode-tablet .mobile-menu-button {
+            display: block !important;
+        }
+        
+        /* PC模式重置样式 */
+        .device-mode-pc .gitee-sidebar {
+            position: fixed !important;
+            left: 0 !important;
+            top: 60px !important;
+            width: 80px !important;
+            height: calc(100vh - 60px) !important;
+            transform: translateX(0) !important;
+            background: rgba(248, 249, 250, 0.95) !important;
+            border-radius: 0 12px 12px 0 !important;
+            box-shadow: 0 2px 12px rgba(108, 117, 125, 0.08) !important;
+            overflow-y: auto !important;
+            overflow-x: visible !important;
+            bottom: auto !important;
+            backdrop-filter: none !important;
+            border-top: none !important;
+        }
+        
+        .device-mode-pc .gitee-sidebar:hover {
+            width: 200px !important;
+        }
+        
+        .device-mode-pc .gitee-content {
+            margin-left: 80px !important;
+            width: calc(100% - 80px) !important;
+            margin-bottom: 0 !important;
+        }
+        
+        .device-mode-pc .gitee-nav-item {
+            width: 50px !important;
+            height: auto !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            padding: 6px 0 !important;
+            margin: 1px 0 !important;
+            text-align: center !important;
+        }
+        
+        .device-mode-pc .gitee-nav-item i {
+            font-size: 18px !important;
+            margin-bottom: 2px !important;
+            margin-right: 0 !important;
+        }
+        
+        .device-mode-pc .gitee-nav-item .nav-text {
+            font-size: 12px !important;
+            opacity: 1 !important;
+            display: block !important;
+        }
+        
+        .device-mode-pc .gitee-nav-item .nav-text-full {
+            display: block !important;
+        }
+        
+        .device-mode-pc .sidebar-background-extension {
+            display: block !important;
+        }
+        
+        .device-mode-pc .mobile-menu-button {
+            display: none !important;
+        }
+        
+        /* 页面特定样式占位符 - 在具体页面中替换 */
+        /* {{PAGE_SPECIFIC_STYLES}} */
+        
+        /* 增强的响应式设计 */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .header {
+                padding-left: 1rem;
+            }
+        }
+        
+        /* 改进的动画效果 */
+        .gitee-nav-item {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .gitee-nav-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 通知徽章样式 */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* 通知系统样式 */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            max-width: 400px;
+        }
+        
+        .notification {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            margin-bottom: 10px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            border-left: 4px solid #3498db;
+        }
+        
+        .notification.notification-show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .notification.notification-hiding {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        
+        .notification.notification-success {
+            border-left-color: #27ae60;
+        }
+        
+        .notification.notification-error {
+            border-left-color: #e74c3c;
+        }
+        
+        .notification.notification-warning {
+            border-left-color: #f39c12;
+        }
+        
+        .notification-icon {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        .notification-success .notification-icon {
+            color: #27ae60;
+        }
+        
+        .notification-error .notification-icon {
+            color: #e74c3c;
+        }
+        
+        .notification-warning .notification-icon {
+            color: #f39c12;
+        }
+        
+        .notification-info .notification-icon {
+            color: #3498db;
+        }
+        
+        .notification-content {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .notification-close {
+            margin-left: 12px;
+            cursor: pointer;
+            color: #95a5a6;
+            transition: color 0.2s;
+        }
+        
+        .notification-close:hover {
+            color: #34495e;
+        }
+        
+
+        
+        /* 页面加载器样式 */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+        
+        .page-loader.loader-hiding {
+            opacity: 0;
+        }
+        
+        .loader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+        
+        .loader-text {
+            font-size: 16px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        /* 移动端侧边栏遮罩 */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        body.sidebar-open {
+            overflow: hidden;
+        }
+        
+        /* 菜单按钮容器 */
+        .menu-button-container {
+            position: relative;
+            z-index: 25001;
+        }
+        
+        /* 下拉菜单样式 */
+        .dropdown-menu {
+            position: fixed;
+            top: 60px;
+            left: 80px;
+            width: auto;
+            max-width: min(800px, calc(100vw - 100px));
+            min-width: 280px;
+            background: #ffffff;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            z-index: 999999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+        
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-menu-content {
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            background: #ffffff;
+            position: relative;
+            z-index: 999999;
+            padding-bottom: 12px; /* 为菜单管理按钮留出空间 */
+        }
+        
+        .dropdown-menu-sidebar {
+            width: 100%;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 20px 8px 20px; /* 还原桌面端样式 */
+            display: flex;
+            justify-content: center;
+            gap: 4px; /* 增加按钮间距 */
+            position: relative;
+            z-index: 999999;
+            flex-wrap: nowrap; /* 强制一行显示 */
+            overflow-x: auto; /* 内容过多时允许横向滚动 */
+        }
+        
+        .dropdown-menu-main {
+            flex: 1;
+            padding: 20px 20px 16px 20px; /* 统一内边距 */
+            background: #ffffff;
+            position: relative;
+            z-index: 999999;
+        }
+        
+        .dropdown-menu-category {
+            display: block;
+            padding: 8px 16px; /* 增加内边距让按钮更易点击 */
+            color: #374151;
+            text-decoration: none;
+            border-bottom: 3px solid transparent;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin: 0; /* 去除外边距，使用gap统一间距 */
+            border-radius: 6px 6px 0 0;
+            white-space: nowrap;
+            flex-shrink: 0;
+            min-width: fit-content; /* 确保按钮不会被压缩 */
+        }
+        
+        .dropdown-menu-category:hover {
+            background: #e0f2fe;
+            border-bottom-color: #0891b2;
+            color: #0891b2;
+        }
+        
+        .dropdown-menu-category.active {
+            background: #e0f2fe;
+            border-bottom-color: #0891b2;
+            color: #0891b2;
+        }
+        
+        .dropdown-menu-category i {
+            width: 16px;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        
+        .dropdown-menu-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 3px;
+            width: 100%;
+        }
+        
+        .dropdown-menu-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 6px 10px;
+            color: #374151;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+            background: transparent;
+            border: none;
+            text-align: left;
+            min-height: 36px;
+            justify-content: flex-start;
+            position: relative;
+            white-space: nowrap;
+        }
+        
+        .dropdown-menu-item:hover {
+            background: #f3f4f6;
+            color: #1e40af;
+        }
+        
+        .dropdown-menu-item i {
+            font-size: 14px;
+            margin-right: 6px;
+            margin-bottom: 0;
+            color: #6b7280;
+            transition: color 0.2s ease;
+            width: 16px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .dropdown-menu-item:hover i {
+            color: #3b82f6;
+        }
+        
+        .dropdown-menu-item-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            overflow: hidden;
+        }
+        
+        .dropdown-menu-item-title {
+            font-size: 12px;
+            font-weight: 500;
+            margin: 0;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .dropdown-menu-item-desc {
+            display: none;
+        }
+        
+        .dropdown-menu-item-badge {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 8px;
+            min-width: 16px;
+            text-align: center;
+        }
+        
+        /* 5角星悬停效果 */
+        .dropdown-menu-item-star {
+            color: #d1d5db;
+            font-size: 12px;
+            opacity: 1;
+            transition: all 0.3s ease;
+            margin-right: 4px;
+            flex-shrink: 0;
+            cursor: pointer;
+            position: relative;
+            z-index: 10;
+            pointer-events: auto;
+            padding: 2px;
+        }
+        
+        /* 5角星未选中状态 */
+        .dropdown-menu-item-star.unstarred {
+            color: #d1d5db;
+            opacity: 0.3;
+        }
+        
+        /* 5角星选中状态 */
+        .dropdown-menu-item-star.starred {
+            color: #fbbf24;
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        
+        /* 5角星悬停效果 */
+        .dropdown-menu-item:hover .dropdown-menu-item-star {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        
+        .dropdown-menu-item:hover .dropdown-menu-item-star.starred {
+            color: #f59e0b;
+            transform: scale(1.3);
+        }
+        
+        .dropdown-menu-item:hover .dropdown-menu-item-star.unstarred {
+            color: #9ca3af;
+        }
+        
+        /* 确保功能图标不会被5角星遮挡 */
+        .dropdown-menu-item > i:not(.dropdown-menu-item-star) {
+            position: relative;
+            z-index: 5;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 1024px) {
+            .dropdown-menu {
+                left: 0;
+                right: 0;
+                transform: translateY(-10px);
+                max-width: none;
+                min-width: auto;
+                width: 100% !important; /* 移动端强制全宽 */
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+            
+            .dropdown-menu.active {
+                transform: translateY(0);
+            }
+            
+            .dropdown-menu-content {
+                flex-direction: column;
+                height: auto;
+                padding-bottom: 12px; /* 保持统一留白 */
+            }
+            
+            .dropdown-menu-sidebar {
+                width: 100%;
+                border-bottom: 1px solid #e2e8f0;
+                padding: 8px 16px 6px 16px; /* 移动端适配内边距 */
+                overflow-x: auto;
+                justify-content: flex-start; /* 移动端左对齐 */
+                flex-wrap: nowrap; /* 保持一行显示 */
+                gap: 2px; /* 移动端减少间距 */
+            }
+            
+            .dropdown-menu-main {
+                padding: 16px 16px 12px 16px; /* 移动端适配内边距 */
+            }
+            
+            .dropdown-menu-category {
+                padding: 6px 12px; /* 移动端适配按钮大小 */
+                margin: 0;
+                font-size: 13px;
+                min-width: fit-content;
+                flex-shrink: 0;
+            }
+            
+            .dropdown-menu-items {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
+                gap: 3px;
+            }
+            
+            .dropdown-menu-item {
+                padding: 6px 10px;
+                min-height: 36px;
+            }
+            
+            .dropdown-menu-item i {
+                font-size: 14px;
+                margin-right: 6px;
+                width: 16px;
+            }
+            
+            .dropdown-menu-item-title {
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dropdown-menu-sidebar {
+                padding: 6px 12px 4px 12px; /* 还原小屏幕内边距到12px */
+                gap: 1px;
+            }
+            
+            .dropdown-menu-category {
+                padding: 4px 8px; /* 小屏幕进一步减少按钮大小 */
+                margin: 0;
+                font-size: 12px;
+            }
+            
+            .dropdown-menu-main {
+                padding: 12px 12px 8px 12px; /* 小屏幕适配内边距 */
+            }
+            
+            .dropdown-menu-items {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)) !important;
+                gap: 2px;
+            }
+            
+            .dropdown-menu-item {
+                padding: 5px 8px;
+                min-height: 32px;
+            }
+            
+            .dropdown-menu-item i {
+                font-size: 13px;
+                margin-right: 5px;
+                width: 14px;
+            }
+            
+            .dropdown-menu-item-title {
+                font-size: 11px;
+            }
+            
+            /* 菜单管理按钮移动端适配 */
+            .menu-settings-button {
+                bottom: 6px;
+                right: 12px;
+                width: 32px;
+                height: 32px;
+            }
+            
+            .menu-settings-button i {
+                font-size: 12px;
+            }
+            
+            .menu-settings-tooltip {
+                font-size: 11px;
+                padding: 4px 8px;
+                bottom: 42px;
+            }
+        }
+        
+        /* 移动端菜单按钮 - 在所有屏幕尺寸下都显示 */
+        .mobile-menu-button {
+            display: block;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #34495e;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            margin-right: 12px;
+            position: relative;
+            z-index: 25002;
+        }
+        
+        .mobile-menu-button:hover {
+            background-color: rgba(52, 73, 94, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .mobile-menu-button.active {
+            background-color: rgba(0, 123, 255, 0.1);
+            color: #007bff;
+            transform: scale(1.05);
+        }
+        
+        /* 移动端遮罩层 */
+        .mobile-overlay {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 60px);
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        @media (max-width: 1024px) {
+            .mobile-menu-button {
+                display: block;
+            }
+            
+            .gitee-sidebar {
+                position: fixed;
+                left: 0;
+                top: 60px;
+                z-index: 50;
+                width: 200px;
+                height: calc(100vh - 60px);
+                transform: translateX(-100%);
+                transition: transform 0.3s ease-in-out;
+                background: rgba(248, 249, 250, 0.95);
+                box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+            }
+            
+            .gitee-sidebar:hover {
+                width: 200px;
+            }
+            
+            .gitee-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .gitee-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            
+            .gitee-nav-item .nav-text {
+                opacity: 1;
+                display: block;
+            }
+            
+            .gitee-nav-item .nav-text-full {
+                display: none;
+            }
+            
+            .gitee-nav-item {
+                width: auto;
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 12px 20px;
+                margin: 2px 10px;
+                text-align: left;
+            }
+            
+            .gitee-nav-item i {
+                font-size: 16px;
+                margin-right: 12px;
+                margin-bottom: 0;
+            }
+            
+            .gitee-nav-item .nav-text {
+                font-size: 14px;
+                font-weight: 500;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .gitee-content {
+                padding: 1rem;
+                margin-bottom: 80px; /* 为底部导航栏留出空间 */
+            }
+            
+            /* 手机端底部导航栏样式 */
+            .gitee-sidebar {
+                position: fixed;
+                left: 0;
+                top: auto; /* 取消顶部定位 */
+                bottom: 0; /* 固定到底部 */
+                width: 100% !important; /* 占满屏幕宽度 */
+                height: 80px; /* 设置导航栏高度 */
+                max-height: 80px;
+                transform: translateX(0) !important; /* 始终显示 */
+                background: rgba(248, 249, 250, 0.98); /* 稍微增加透明度 */
+                backdrop-filter: blur(10px); /* 添加毛玻璃效果 */
+                border-radius: 0; /* 移除圆角 */
+                border-top: 1px solid rgba(222, 226, 230, 0.8); /* 顶部边框 */
+                box-shadow: 0 -2px 20px rgba(108, 117, 125, 0.15); /* 向上的阴影 */
+                z-index: 100; /* 确保在最顶层 */
+                overflow-x: auto; /* 水平滚动 */
+                overflow-y: hidden; /* 隐藏垂直滚动 */
+            }
+            
+            .gitee-sidebar .py-4 {
+                padding: 8px 12px; /* 调整内边距 */
+                display: flex; /* 水平布局 */
+                flex-direction: row; /* 水平排列 */
+                align-items: center; /* 垂直居中 */
+                justify-content: center; /* 水平居中对齐 */
+                height: 100%; /* 占满高度 */
+                gap: 8px; /* 项目间距 */
+                overflow-x: auto; /* 水平滚动 */
+                overflow-y: hidden;
+            }
+            
+            .gitee-sidebar .gitee-nav-item {
+                width: 60px; /* 固定宽度 */
+                height: 60px; /* 固定高度 */
+                min-width: 60px; /* 最小宽度 */
+                flex-direction: column; /* 垂直布局图标和文字 */
+                justify-content: center;
+                align-items: center;
+                padding: 6px 4px; /* 调整内边距 */
+                margin: 0; /* 移除外边距 */
+                text-align: center;
+                border-radius: 8px; /* 圆角 */
+                flex-shrink: 0; /* 防止压缩 */
+                position: relative;
+                overflow: visible;
+            }
+            
+            .gitee-sidebar .gitee-nav-item i {
+                font-size: 18px; /* 稍大的图标 */
+                margin-right: 0; /* 移除右边距 */
+                margin-bottom: 2px; /* 图标和文字间距 */
+            }
+            
+            .gitee-sidebar .gitee-nav-item .nav-text {
+                font-size: 10px; /* 小号文字 */
+                font-weight: 500;
+                line-height: 1;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 100%;
+                display: block; /* 确保显示 */
+                opacity: 1;
+            }
+            
+            .gitee-sidebar .gitee-nav-item .nav-text-full {
+                display: none; /* 隐藏完整文本 */
+            }
+            
+            /* 底部导航栏悬停效果 */
+            .gitee-sidebar .gitee-nav-item:hover {
+                transform: translateY(-2px); /* 向上轻微移动 */
+                background: rgba(227, 242, 253, 0.8);
+                box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+            }
+            
+            .gitee-sidebar .gitee-nav-item:hover i {
+                color: #007bff;
+                transform: scale(1.1);
+            }
+            
+            .gitee-sidebar .gitee-nav-item:hover .nav-text {
+                color: #007bff;
+            }
+            
+            /* 隐藏背景扩展元素 */
+            .gitee-sidebar .sidebar-background-extension {
+                display: none;
+            }
+            
+            /* 移动端遮罩层在底部导航模式下不需要 */
+            .mobile-overlay {
+                display: none;
+            }
+            
+            .notification-container {
+                left: 10px;
+                right: 10px;
+                max-width: none;
+                bottom: 90px; /* 避免被底部导航栏遮挡 */
+            }
+            
+            .notification {
+                margin-bottom: 8px;
+                padding: 12px;
+            }
+        }
+        
+        .dropdown-menu-section {
+            background: transparent;
+            border-radius: 0;
+            padding: 0;
+            border: none;
+            display: none;
+            min-height: fit-content;
+            height: fit-content;
+        }
+        
+        .dropdown-menu-section.active {
+            display: block;
+            min-height: fit-content;
+            height: fit-content;
+        }
+        
+        .dropdown-menu-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            min-height: fit-content;
+            height: fit-content;
+        }
+        
+        .dropdown-menu-section-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        /* 菜单管理齿轮图标样式 */
+        .menu-settings-button {
+            position: absolute;
+            bottom: 8px; /* 调整底部距离，与内容留白一致 */
+            right: 16px; /* 调整右侧距离，与内容留白一致 */
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .menu-settings-button:hover {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            border-color: #94a3b8;
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .menu-settings-button i {
+            font-size: 14px;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-settings-button:hover i {
+            color: #475569;
+            transform: rotate(90deg);
+        }
+        
+        .menu-settings-button:active {
+            transform: scale(0.95);
+        }
+        
+        /* 菜单管理工具提示 */
+        .menu-settings-tooltip {
+            position: absolute;
+            bottom: 50px;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 1000001;
+        }
+        
+        .menu-settings-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            right: 12px;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid rgba(0, 0, 0, 0.8);
+        }
+        
+        .menu-settings-button:hover .menu-settings-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(-2px);
+        }
+        
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .menu-settings-button {
+                bottom: -6px;
+                right: 8px;
+                width: 32px;
+                height: 32px;
+            }
+            
+            .menu-settings-button i {
+                font-size: 12px;
+            }
+            
+            .menu-settings-tooltip {
+                font-size: 11px;
+                padding: 4px 8px;
+                bottom: 42px;
+            }
+        }
+        
+        /* 菜单管理模态框样式 */
+        .menu-management-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-management-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .menu-management-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+        
+        .menu-management-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .menu-management-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .menu-management-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .menu-management-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        
+        .menu-management-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .menu-management-body {
+            padding: 24px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .menu-management-section {
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .menu-management-section:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .menu-management-section h4 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .menu-management-desc {
+            margin: 0 0 16px 0;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .menu-management-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        
+        .btn-outline {
+            background: white;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+        }
+        
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+            color: #475569;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: #ffffff;
+            border: 1px solid #dc3545;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .gitee-btn-danger:hover {
+            background: #c82333;
+            border-color: #bd2130;
+        }
+        
+        /* 紧凑模式样式 */
+        .dropdown-menu.compact-mode .dropdown-menu-item {
+            padding: 6px 8px;
+            min-height: 32px;
+        }
+        
+        .dropdown-menu.compact-mode .dropdown-menu-item-title {
+            font-size: 12px;
+        }
+        
+        .dropdown-menu.compact-mode .dropdown-menu-main {
+            padding: 16px 20px;
+        }
+        
+        /* 深色主题样式 */
+        .dropdown-menu.dark-theme {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        
+        .dropdown-menu.dark-theme .dropdown-menu-sidebar {
+            background: #0f172a;
+            border-bottom-color: #334155;
+        }
+        
+        .dropdown-menu.dark-theme .dropdown-menu-main {
+            background: #1e293b;
+        }
+        
+        .dropdown-menu.dark-theme .dropdown-menu-category {
+            color: #cbd5e1;
+        }
+        
+        .dropdown-menu.dark-theme .dropdown-menu-category:hover,
+        .dropdown-menu.dark-theme .dropdown-menu-category.active {
+            background: #334155;
+            color: #60a5fa;
+        }
+        
+        .dropdown-menu.dark-theme .dropdown-menu-item {
+            color: #cbd5e1;
+        }
+        
+        .dropdown-menu.dark-theme .dropdown-menu-item:hover {
+            background: #334155;
+            color: #60a5fa;
+        }
+        
+        .dropdown-menu.dark-theme .dropdown-menu-section-title {
+            color: #f1f5f9;
+        }
+        
+        @media (max-width: 768px) {
+            .menu-management-content {
+                width: 95%;
+                margin: 20px;
+            }
+            
+            .menu-management-header {
+                padding: 16px 20px;
+            }
+            
+            .menu-management-body {
+                padding: 20px;
+            }
+            
+            .menu-management-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 顶部导航栏 -->
+    <header class="gitee-header fixed w-full top-0 z-50">
+        <div class="flex items-center justify-between h-full px-4">
+            <!-- 左侧：Logo和导航 -->
+            <div class="flex items-center">
+                <!-- 下拉菜单按钮 -->
+                <div class="menu-button-container">
+                    <button class="mobile-menu-button" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <!-- 下拉菜单 -->
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="dropdown-menu-content">
+                            <div class="dropdown-menu-sidebar">
+                                <!-- 左侧分类导航 -->
+                                <a href="#" class="dropdown-menu-category active" data-category="core">
+                                    <i class="fas fa-cube"></i>核心功能
+                                </a>
+                                <a href="#" class="dropdown-menu-category" data-category="organization">
+                                    <i class="fas fa-sitemap"></i>组织管理
+                                </a>
+                                <a href="#" class="dropdown-menu-category" data-category="monitoring">
+                                    <i class="fas fa-chart-line"></i>监控分析
+                                </a>
+                                <a href="#" class="dropdown-menu-category" data-category="system">
+                                    <i class="fas fa-cogs"></i>系统设置
+                                </a>
+                            </div>
+                            
+                            <div class="dropdown-menu-main">
+                                <!-- 核心功能区域 -->
+                                <div class="dropdown-menu-section active" data-section="core">
+                                    <div class="dropdown-menu-section-title">核心功能</div>
+                                    <div class="dropdown-menu-items">
+                                        <a href="dashboard.html" class="dropdown-menu-item" data-menu-id="dashboard">
+                                            <i class="fas fa-star dropdown-menu-item-star"></i>
+                                            <i class="fas fa-home"></i>
+                                            <div class="dropdown-menu-item-content">
+                                                <div class="dropdown-menu-item-title">仪表盘</div>
+                                            </div>
+                                        </a>
+                                        
+                                        <a href="user-management.html" class="dropdown-menu-item" data-menu-id="user-management">
+                                            <i class="fas fa-star dropdown-menu-item-star"></i>
+                                            <i class="fas fa-users"></i>
+                                            <div class="dropdown-menu-item-content">
+                                                <div class="dropdown-menu-item-title">用户管理</div>
+                                            </div>
+                                            <span class="dropdown-menu-item-badge">3</span>
+                                        </a>
+                                        
+                                        <a href="role-management.html" class="dropdown-menu-item" data-menu-id="role-management">
+                                            <i class="fas fa-star dropdown-menu-item-star"></i>
+                                            <i class="fas fa-user-tag"></i>
+                                            <div class="dropdown-menu-item-content">
+                                                <div class="dropdown-menu-item-title">角色管理</div>
+                                            </div>
+                                        </a>
+                                        
+                                        <a href="permission-config.html" class="dropdown-menu-item" data-menu-id="permission-config">
+                                            <i class="fas fa-star dropdown-menu-item-star"></i>
+                                            <i class="fas fa-shield-alt"></i>
+                                            <div class="dropdown-menu-item-content">
+                                                <div class="dropdown-menu-item-title">权限配置</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <!-- 组织管理区域 -->
+                                <div class="dropdown-menu-section" data-section="organization">
+                                    <div class="dropdown-menu-section-title">组织管理</div>
+                                    <div class="dropdown-menu-items">
+                                        <a href="department-management.html" class="dropdown-menu-item" data-menu-id="department-management">
+                                            <i class="fas fa-star dropdown-menu-item-star"></i>
+                                            <i class="fas fa-sitemap"></i>
+                                            <div class="dropdown-menu-item-content">
+                                                <div class="dropdown-menu-item-title">部门管理</div>
+                                            </div>
+                                        </a>
+                                        
+                                        <a href="menu-management.html" class="dropdown-menu-item" data-menu-id="menu-management">
+                                            <i class="fas fa-star dropdown-menu-item-star"></i>
+                                            <i class="fas fa-list"></i>
+                                            <div class="dropdown-menu-item-content">
+                                                <div class="dropdown-menu-item-title">菜单管理</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <!-- 监控分析区域 -->
+                                <div class="dropdown-menu-section" data-section="monitoring">
+                                    <div class="dropdown-menu-section-title">监控分析</div>
+                                    <div class="dropdown-menu-items">
+                                        <a href="operation-log.html" class="dropdown-menu-item" data-menu-id="operation-log">
+                                            <i class="fas fa-star dropdown-menu-item-star"></i>
+                                            <i class="fas fa-file-alt"></i>
+                                            <div class="dropdown-menu-item-content">
+                                                <div class="dropdown-menu-item-title">操作日志</div>
+                                            </div>
+                                            <span class="dropdown-menu-item-badge">8</span>
+                                        </a>
+                                        
+                                        <a href="statistics.html" class="dropdown-menu-item" data-menu-id="statistics">
+                                            <i class="fas fa-star dropdown-menu-item-star"></i>
+                                            <i class="fas fa-chart-bar"></i>
+                                            <div class="dropdown-menu-item-content">
+                                                <div class="dropdown-menu-item-title">统计报表</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <!-- 系统设置区域 -->
+                                <div class="dropdown-menu-section" data-section="system">
+                                    <div class="dropdown-menu-section-title">系统设置</div>
+                                    <div class="dropdown-menu-items">
+                                        <a href="system-settings.html" class="dropdown-menu-item" data-menu-id="system-settings">
+                                            <i class="fas fa-star dropdown-menu-item-star"></i>
+                                            <i class="fas fa-cog"></i>
+                                            <div class="dropdown-menu-item-content">
+                                                <div class="dropdown-menu-item-title">系统设置</div>
+                                            </div>
+                                        </a>
+                                        
+                                        <a href="user-profile.html" class="dropdown-menu-item" data-menu-id="user-profile">
+                                            <i class="fas fa-star dropdown-menu-item-star"></i>
+                                            <i class="fas fa-user"></i>
+                                            <div class="dropdown-menu-item-content">
+                                                <div class="dropdown-menu-item-title">个人中心</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 菜单管理齿轮图标 -->
+                            <div class="menu-settings-button" id="menuSettingsButton">
+                                <i class="fas fa-cog"></i>
+                                <div class="menu-settings-tooltip">菜单管理</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center">
+                    <div class="h-8 w-8 bg-blue-600 rounded flex items-center justify-center">
+                        <i class="fas fa-user-shield text-white text-sm"></i>
+                    </div>
+                    <span class="ml-2 text-lg font-semibold text-gray-900">BrainBase</span>
+                </div>
+                <!-- 主导航菜单 -->
+                <nav class="hidden lg:flex ml-8 space-x-6">
+                    <a href="#" class="text-gray-600 hover:text-gray-900 pb-2">仪表盘</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 pb-2">用户管理</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 pb-2">角色权限</a>
+                    <a href="#" class="text-gray-900 font-medium border-b-2 border-blue-600 pb-2">系统管理</a>
+                </nav>
+            </div>
+            <!-- 右侧：搜索和用户信息 -->
+            <div class="flex items-center space-x-4">
+                <div class="relative hidden md:block">
+                    <input type="text" placeholder="搜索用户、角色、权限..." class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
+                </div>
+                <button class="text-gray-600 hover:text-gray-900 relative">
+                    <i class="fas fa-bell text-lg"></i>
+                    <span class="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                </button>
+                <div class="flex items-center space-x-2">
+                    <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="用户头像">
+                    <span class="text-sm font-medium text-gray-700 hidden md:block">张工程师</span>
+                    <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                    
+                    <!-- 设备模拟切换按钮 -->
+                    <div class="device-simulator-container" id="deviceSimulatorContainer">
+                        <button class="device-simulator-toggle" id="deviceSimulatorToggle">
+                            <i class="fas fa-mobile-alt" id="deviceIcon"></i>
+                        </button>
+                        
+                        <!-- 设备选择下拉菜单 -->
+                        <div class="device-selector-dropdown" id="deviceSelectorDropdown">
+                            <div class="device-category" data-category="mobile">
+                                <div class="device-category-title">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    手机设备
+                                </div>
+                                <div class="device-list">
+                                    <div class="device-item" data-device="iphone-14-pro-max">
+                                        <div class="device-name">iPhone 14 Pro Max</div>
+                                        <div class="device-specs">430×932</div>
+                                    </div>
+                                    <div class="device-item" data-device="iphone-14-pro">
+                                        <div class="device-name">iPhone 14 Pro</div>
+                                        <div class="device-specs">393×852</div>
+                                    </div>
+                                    <div class="device-item" data-device="iphone-se">
+                                        <div class="device-name">iPhone SE</div>
+                                        <div class="device-specs">375×667</div>
+                                    </div>
+                                    <div class="device-item" data-device="samsung-s23-ultra">
+                                        <div class="device-name">Galaxy S23 Ultra</div>
+                                        <div class="device-specs">412×915</div>
+                                    </div>
+                                    <div class="device-item" data-device="samsung-s23">
+                                        <div class="device-name">Galaxy S23</div>
+                                        <div class="device-specs">360×780</div>
+                                    </div>
+                                    <div class="device-item" data-device="pixel-7-pro">
+                                        <div class="device-name">Pixel 7 Pro</div>
+                                        <div class="device-specs">412×892</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="device-category" data-category="tablet">
+                                <div class="device-category-title">
+                                    <i class="fas fa-tablet-alt"></i>
+                                    平板设备
+                                </div>
+                                <div class="device-list">
+                                    <div class="device-item" data-device="ipad-air">
+                                        <div class="device-name">iPad Air</div>
+                                        <div class="device-specs">820×1180</div>
+                                    </div>
+                                    <div class="device-item" data-device="ipad-mini">
+                                        <div class="device-name">iPad Mini</div>
+                                        <div class="device-specs">744×1133</div>
+                                    </div>
+                                    <div class="device-item" data-device="galaxy-tab-s8">
+                                        <div class="device-name">Galaxy Tab S8</div>
+                                        <div class="device-specs">753×1037</div>
+                                    </div>
+                                    <div class="device-item" data-device="surface-pro">
+                                        <div class="device-name">Surface Pro</div>
+                                        <div class="device-specs">912×1368</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="device-category" data-category="desktop">
+                                <div class="device-category-title">
+                                    <i class="fas fa-desktop"></i>
+                                    桌面设备
+                                </div>
+                                <div class="device-list">
+                                    <div class="device-item" data-device="desktop-1920">
+                                        <div class="device-name">标准桌面</div>
+                                        <div class="device-specs">1920×1080</div>
+                                    </div>
+                                    <div class="device-item" data-device="desktop-1440">
+                                        <div class="device-name">高清桌面</div>
+                                        <div class="device-specs">2560×1440</div>
+                                    </div>
+                                    <div class="device-item" data-device="laptop-1366">
+                                        <div class="device-name">笔记本电脑</div>
+                                        <div class="device-specs">1366×768</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 移动端遮罩层 -->
+    <div id="mobileOverlay" class="mobile-overlay"></div>
+    
+    <div class="flex pt-16">
+        <!-- 左侧导航栏 -->
+        <aside id="sidebar" class="gitee-sidebar">
+            <div class="sidebar-background-extension"></div>
+            <div class="py-4 relative z-10">
+                <!-- 仪表盘 -->
+                 <a href="dashboard.html" class="gitee-nav-item" data-menu-id="dashboard">
+                     <i class="fas fa-home"></i>
+                     <span class="nav-text">仪表盘</span>
+                     <span class="nav-text-full">仪表盘</span>
+                 </a>
+                 
+                 <!-- 用户管理 -->
+                 <a href="user-management.html" class="gitee-nav-item" data-menu-id="user-management">
+                     <i class="fas fa-users"></i>
+                     <span class="nav-text">用户</span>
+                     <span class="nav-text-full">用户管理</span>
+                 </a>
+                 
+                 <!-- 角色管理 -->
+                 <a href="role-management.html" class="gitee-nav-item" data-menu-id="role-management">
+                     <i class="fas fa-user-tag"></i>
+                     <span class="nav-text">角色</span>
+                     <span class="nav-text-full">角色管理</span>
+                 </a>
+                 
+                 <!-- 权限配置 -->
+                 <a href="permission-config.html" class="gitee-nav-item" data-menu-id="permission-config">
+                     <i class="fas fa-shield-alt"></i>
+                     <span class="nav-text">权限</span>
+                     <span class="nav-text-full">权限配置</span>
+                 </a>
+                 
+                 <!-- 菜单管理 -->
+                 <a href="menu-management.html" class="gitee-nav-item" data-menu-id="menu-management">
+                     <i class="fas fa-list"></i>
+                     <span class="nav-text">菜单</span>
+                     <span class="nav-text-full">菜单管理</span>
+                 </a>
+                 
+                 <!-- 部门管理 -->
+                 <a href="department-management.html" class="gitee-nav-item" data-menu-id="department-management">
+                     <i class="fas fa-sitemap"></i>
+                     <span class="nav-text">部门</span>
+                     <span class="nav-text-full">部门管理</span>
+                 </a>
+                 
+                 <!-- 操作日志 -->
+                 <a href="operation-log.html" class="gitee-nav-item" data-menu-id="operation-log">
+                     <i class="fas fa-file-alt"></i>
+                     <span class="nav-text">日志</span>
+                     <span class="nav-text-full">操作日志</span>
+                 </a>
+                 
+                 <!-- 统计报表 -->
+                 <a href="statistics.html" class="gitee-nav-item" data-menu-id="statistics">
+                     <i class="fas fa-chart-bar"></i>
+                     <span class="nav-text">统计</span>
+                     <span class="nav-text-full">统计报表</span>
+                 </a>
+                 
+                 <!-- 系统设置 -->
+                 <a href="system-settings.html" class="gitee-nav-item" data-menu-id="system-settings">
+                     <i class="fas fa-cog"></i>
+                     <span class="nav-text">设置</span>
+                     <span class="nav-text-full">系统设置</span>
+                 </a>
+                 
+                 <!-- 个人中心 -->
+                 <a href="user-profile.html" class="gitee-nav-item" data-menu-id="user-profile">
+                     <i class="fas fa-user"></i>
+                     <span class="nav-text">个人</span>
+                     <span class="nav-text-full">个人中心</span>
+                 </a>
+            </div>
+        </aside>
+
+        <!-- 主内容区域 -->
+        <main class="gitee-content p-6">
+            {{PAGE_CONTENT}}
+        </main>
+    </div>
+
+    <!-- 页面模拟容器 -->
+    <div class="page-simulator-container" id="pageSimulatorContainer">
+        <!-- 设备控制按钮 -->
+        <div class="device-controls" id="deviceControls">
+            <button class="device-control-btn" id="rotateDevice" data-tooltip="旋转设备">
+                <i class="fas fa-redo"></i>
+            </button>
+            <button class="device-control-btn" id="closeSimulator" data-tooltip="关闭模拟器">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- 设备信息 -->
+        <div class="device-info" id="deviceInfo">
+            设备信息
+        </div>
+        
+        <div class="device-frame" id="deviceFrame">
+            <iframe class="device-screen" id="deviceScreen" src=""></iframe>
+        </div>
+    </div>
+
+    <!-- 通用JavaScript -->
+    <script>
+        // 设备配置数据
+        const deviceConfigs = {
+            'iphone-14-pro-max': { name: 'iPhone 14 Pro Max', width: 430, height: 932, type: 'mobile' },
+            'iphone-14-pro': { name: 'iPhone 14 Pro', width: 393, height: 852, type: 'mobile' },
+            'iphone-se': { name: 'iPhone SE', width: 375, height: 667, type: 'mobile' },
+            'samsung-s23-ultra': { name: 'Galaxy S23 Ultra', width: 412, height: 915, type: 'mobile' },
+            'samsung-s23': { name: 'Galaxy S23', width: 360, height: 780, type: 'mobile' },
+            'pixel-7-pro': { name: 'Pixel 7 Pro', width: 412, height: 892, type: 'mobile' },
+            'ipad-air': { name: 'iPad Air', width: 820, height: 1180, type: 'tablet' },
+            'ipad-mini': { name: 'iPad Mini', width: 744, height: 1133, type: 'tablet' },
+            'galaxy-tab-s8': { name: 'Galaxy Tab S8', width: 753, height: 1037, type: 'tablet' },
+            'surface-pro': { name: 'Surface Pro', width: 912, height: 1368, type: 'tablet' },
+            'desktop-1920': { name: '标准桌面', width: 1920, height: 1080, type: 'desktop' },
+            'desktop-1440': { name: '高清桌面', width: 2560, height: 1440, type: 'desktop' },
+            'laptop-1366': { name: '笔记本电脑', width: 1366, height: 768, type: 'desktop' }
+        };
+
+        // 新的设备模拟器
+        class DeviceSimulator {
+            constructor() {
+                this.currentDevice = null;
+                this.isOpen = false;
+                this.isRotated = false;
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                console.log('🎮 设备模拟器已初始化');
+            }
+
+            bindEvents() {
+                // 设备切换按钮点击事件
+                const toggle = document.getElementById('deviceSimulatorToggle');
+                if (toggle) {
+                    toggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.toggleDropdown();
+                    });
+                }
+
+                // 设备选择事件
+                const dropdown = document.getElementById('deviceSelectorDropdown');
+                if (dropdown) {
+                    dropdown.addEventListener('click', (e) => {
+                        const deviceItem = e.target.closest('.device-item');
+                        if (deviceItem) {
+                            const deviceId = deviceItem.getAttribute('data-device');
+                            this.selectDevice(deviceId);
+                        }
+                    });
+                }
+
+                // 关闭下拉菜单的事件
+                document.addEventListener('click', (e) => {
+                    const container = document.getElementById('deviceSimulatorContainer');
+                    if (container && !container.contains(e.target)) {
+                        this.closeDropdown();
+                    }
+                });
+
+                // 模拟器控制按钮
+                const rotateBtn = document.getElementById('rotateDevice');
+                const closeBtn = document.getElementById('closeSimulator');
+                
+                if (rotateBtn) {
+                    rotateBtn.addEventListener('click', () => this.rotateDevice());
+                }
+                
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', () => this.closeSimulator());
+                }
+
+                // ESC键关闭模拟器
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.isOpen) {
+                        this.closeSimulator();
+                    }
+                });
+            }
+
+            toggleDropdown() {
+                const dropdown = document.getElementById('deviceSelectorDropdown');
+                if (dropdown) {
+                    dropdown.classList.toggle('active');
+                }
+            }
+
+            closeDropdown() {
+                const dropdown = document.getElementById('deviceSelectorDropdown');
+                if (dropdown) {
+                    dropdown.classList.remove('active');
+                }
+            }
+
+            selectDevice(deviceId) {
+                const config = deviceConfigs[deviceId];
+                if (!config) return;
+
+                this.currentDevice = deviceId;
+                this.closeDropdown();
+                this.openSimulator(config);
+                this.updateButtonIcon(config.type);
+                
+                console.log(`📱 选择设备: ${config.name} (${config.width}×${config.height})`);
+            }
+
+            updateButtonIcon(deviceType) {
+                const icon = document.getElementById('deviceIcon');
+                if (icon) {
+                    const iconMap = {
+                        'mobile': 'fas fa-mobile-alt',
+                        'tablet': 'fas fa-tablet-alt',
+                        'desktop': 'fas fa-desktop'
+                    };
+                    icon.className = iconMap[deviceType] || 'fas fa-mobile-alt';
+                }
+            }
+
+            openSimulator(config) {
+                const container = document.getElementById('pageSimulatorContainer');
+                const frame = document.getElementById('deviceFrame');
+                const screen = document.getElementById('deviceScreen');
+                const info = document.getElementById('deviceInfo');
+                const rotateBtn = document.getElementById('rotateDevice');
+
+                if (container && frame && screen && info) {
+                    console.log(`🚀 正在启动设备模拟器: ${config.name}`);
+                    
+                    // 设置设备框架大小
+                    this.setFrameSize(frame, config);
+                    
+                    // 根据设备类型显示或隐藏旋转按钮
+                    if (rotateBtn) {
+                        if (config.type === 'desktop') {
+                            rotateBtn.style.display = 'none';
+                            console.log('🖥️ 桌面设备 - 隐藏旋转按钮');
+                        } else {
+                            rotateBtn.style.display = 'flex';
+                            console.log('📱 移动设备 - 显示旋转按钮');
+                        }
+                    }
+                    
+                    // 更新设备信息
+                    const deviceTypeText = {
+                        'mobile': '📱',
+                        'tablet': '📟', 
+                        'desktop': '🖥️'
+                    };
+                    const typeIcon = deviceTypeText[config.type] || '📱';
+                    info.textContent = `${typeIcon} ${config.name} - ${config.width}×${config.height}`;
+                    
+                    // 显示模拟器
+                    container.classList.add('active');
+                    this.isOpen = true;
+                    this.isRotated = false;
+                    
+                    // 延迟加载iframe内容，确保容器已显示
+                    setTimeout(() => {
+                        console.log('📄 加载iframe内容...');
+                        screen.style.opacity = '0';
+                        screen.src = window.location.href;
+                        
+                        // iframe加载完成事件
+                        screen.onload = () => {
+                            console.log('✅ iframe加载完成');
+                            screen.style.transition = 'opacity 0.3s ease';
+                            screen.style.opacity = '1';
+                        };
+                        
+                        // iframe加载错误处理
+                        screen.onerror = () => {
+                            console.error('❌ iframe加载失败');
+                            screen.style.opacity = '1';
+                        };
+                        
+                        // 超时处理
+                        setTimeout(() => {
+                            if (screen.style.opacity === '0') {
+                                console.warn('⚠️ iframe加载超时，强制显示');
+                                screen.style.opacity = '1';
+                            }
+                        }, 5000);
+                    }, 100);
+
+                    // 显示通知
+                    if (window.BrainBase && window.BrainBase.notify) {
+                        BrainBase.notify.show(`设备模拟器已开启 - ${config.name}`, 'success', 3000);
+                    }
+                    
+                    console.log(`✅ 设备模拟器启动完成: ${config.name} (${config.width}×${config.height})`);
+                } else {
+                    console.error('❌ 设备模拟器启动失败: 缺少必要的DOM元素');
+                }
+            }
+
+            setFrameSize(frame, config) {
+                let { width, height } = config;
+                
+                if (this.isRotated && config.type !== 'desktop') {
+                    [width, height] = [height, width];
+                }
+
+                // 清除所有之前的内联样式，避免样式冲突
+                frame.style.width = '';
+                frame.style.height = '';
+                frame.style.maxWidth = '';
+                frame.style.maxHeight = '';
+                frame.style.minWidth = '';
+                frame.style.minHeight = '';
+
+                // 根据设备类型设置框架样式
+                frame.className = `device-frame ${config.type}`;
+                
+                if (config.type !== 'desktop') {
+                    // 手机和平板设备使用精确像素值
+                    frame.style.width = width + 'px';
+                    frame.style.height = height + 'px';
+                    console.log(`📱 设置${config.type}设备尺寸: ${width}×${height}px`);
+                } else {
+                    // 桌面设备使用响应式尺寸
+                    frame.style.width = '90%';
+                    frame.style.height = '90%';
+                    frame.style.maxWidth = width + 'px';
+                    frame.style.maxHeight = height + 'px';
+                    console.log(`🖥️ 设置桌面设备尺寸: 90% (最大${width}×${height}px)`);
+                }
+                
+                // 确保框架可见
+                frame.style.display = 'block';
+                frame.style.visibility = 'visible';
+                
+                console.log(`📐 设备框架尺寸设置完成: ${config.name} - ${width}×${height} (${config.type})`);
+            }
+
+            rotateDevice() {
+                if (!this.currentDevice) return;
+                
+                const config = deviceConfigs[this.currentDevice];
+                if (config.type === 'desktop') return; // 桌面设备不支持旋转
+
+                this.isRotated = !this.isRotated;
+                const frame = document.getElementById('deviceFrame');
+                const info = document.getElementById('deviceInfo');
+                
+                if (frame && info) {
+                    this.setFrameSize(frame, config);
+                    
+                    let { width, height } = config;
+                    if (this.isRotated) {
+                        [width, height] = [height, width];
+                    }
+                    
+                    const deviceTypeText = {
+                        'mobile': '📱',
+                        'tablet': '📟', 
+                        'desktop': '🖥️'
+                    };
+                    const typeIcon = deviceTypeText[config.type] || '📱';
+                    const orientationText = this.isRotated ? '(横屏)' : '(竖屏)';
+                    info.textContent = `${typeIcon} ${config.name} - ${width}×${height} ${orientationText}`;
+                    
+                    console.log(`🔄 设备已旋转: ${config.name} - ${width}×${height}`);
+                }
+            }
+
+            closeSimulator() {
+                const container = document.getElementById('pageSimulatorContainer');
+                if (container) {
+                    container.classList.remove('active');
+                    this.isOpen = false;
+                    this.isRotated = false;
+                    console.log('❌ 设备模拟器已关闭');
+                }
+            }
+
+            // 获取当前选择的设备
+            getCurrentDevice() {
+                return this.currentDevice ? deviceConfigs[this.currentDevice] : null;
+            }
+        }
+
+        // 五角星状态管理和侧边栏联动功能
+        class MenuStarManager {
+            constructor() {
+                this.starredItems = this.loadStarredItems();
+                this.eventsAreBound = false;
+                this.init();
+            }
+            
+            loadStarredItems() {
+                try {
+                    const saved = localStorage.getItem('brainbase-starred-items');
+                    return saved ? JSON.parse(saved) : ['dashboard'];
+                } catch (e) {
+                    console.error('加载收藏状态失败:', e);
+                    return ['dashboard'];
+                }
+            }
+            
+            saveStarredItems() {
+                try {
+                    localStorage.setItem('brainbase-starred-items', JSON.stringify(this.starredItems));
+                } catch (e) {
+                    console.error('保存收藏状态失败:', e);
+                }
+            }
+            
+            init() {
+                this.initStarStates();
+                this.bindStarEventsOnce();
+                this.updateSidebar();
+            }
+            
+            initStarStates() {
+                const stars = document.querySelectorAll('.dropdown-menu-item-star');
+                stars.forEach(star => {
+                    const menuItem = star.closest('.dropdown-menu-item');
+                    const menuId = menuItem?.getAttribute('data-menu-id');
+                    
+                    if (menuId) {
+                        if (this.starredItems.includes(menuId)) {
+                            star.classList.add('starred');
+                            star.classList.remove('unstarred');
+                        } else {
+                            star.classList.add('unstarred');
+                            star.classList.remove('starred');
+                        }
+                    }
+                });
+            }
+            
+            bindStarEventsOnce() {
+                if (this.eventsAreBound) return;
+                
+                const dropdownMenu = document.getElementById('dropdownMenu');
+                if (dropdownMenu) {
+                    dropdownMenu.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('dropdown-menu-item-star')) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            const star = e.target;
+                            const menuItem = star.closest('.dropdown-menu-item');
+                            const menuId = menuItem?.getAttribute('data-menu-id');
+                            
+                            if (menuId) {
+                                this.toggleStar(menuId, star);
+                            }
+                        }
+                    });
+                    
+                    this.eventsAreBound = true;
+                }
+            }
+            
+            toggleStar(menuId, starElement) {
+                const isStarred = this.starredItems.includes(menuId);
+                
+                if (isStarred) {
+                    this.starredItems = this.starredItems.filter(id => id !== menuId);
+                    starElement.classList.remove('starred');
+                    starElement.classList.add('unstarred');
+                } else {
+                    this.starredItems.push(menuId);
+                    starElement.classList.remove('unstarred');
+                    starElement.classList.add('starred');
+                }
+                
+                this.saveStarredItems();
+                this.updateSidebar();
+                
+                starElement.style.transform = 'scale(1.4)';
+                setTimeout(() => {
+                    starElement.style.transform = '';
+                }, 200);
+            }
+            
+            updateSidebar() {
+                const sidebarItems = document.querySelectorAll('.gitee-nav-item[data-menu-id]');
+                
+                sidebarItems.forEach(item => {
+                    const menuId = item.getAttribute('data-menu-id');
+                    
+                    if (this.starredItems.includes(menuId)) {
+                        item.style.display = 'flex';
+                        item.style.opacity = '1';
+                        item.style.transform = 'scale(1)';
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            if (!this.starredItems.includes(menuId)) {
+                                item.style.display = 'none';
+                            }
+                        }, 300);
+                    }
+                });
+                
+                this.showEmptyStateIfNeeded();
+            }
+            
+            showEmptyStateIfNeeded() {
+                const sidebar = document.querySelector('.gitee-sidebar .py-4');
+                let emptyState = sidebar.querySelector('.sidebar-empty-state');
+                
+                if (this.starredItems.length === 0) {
+                    if (!emptyState) {
+                        emptyState = document.createElement('div');
+                        emptyState.className = 'sidebar-empty-state';
+                        emptyState.innerHTML = `
+                            <div style="text-align: center; padding: 20px 10px; color: #9ca3af; font-size: 12px;">
+                                <i class="fas fa-star" style="font-size: 24px; margin-bottom: 8px; opacity: 0.3;"></i>
+                                <div>点击总菜单中的</div>
+                                <div>五角星来收藏功能</div>
+                            </div>
+                        `;
+                        sidebar.appendChild(emptyState);
+                    }
+                    emptyState.style.display = 'block';
+                } else {
+                    if (emptyState) {
+                        emptyState.style.display = 'none';
+                    }
+                }
+            }
+            
+            resetStars() {
+                this.starredItems = ['dashboard'];
+                this.saveStarredItems();
+                this.initStarStates();
+                this.updateSidebar();
+            }
+        }
+
+        // 通知系统
+        const notificationSystem = {
+            show: function(message, type = 'info', duration = 3000) {
+                const container = this.getOrCreateContainer();
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                notification.innerHTML = `
+                    <div class="notification-icon">
+                        <i class="fas ${this.getIconForType(type)}"></i>
+                    </div>
+                    <div class="notification-content">${message}</div>
+                    <div class="notification-close">
+                        <i class="fas fa-times"></i>
+                    </div>
+                `;
+                
+                notification.querySelector('.notification-close').addEventListener('click', () => {
+                    notification.classList.add('notification-hiding');
+                    setTimeout(() => notification.remove(), 300);
+                });
+                
+                container.appendChild(notification);
+                
+                setTimeout(() => notification.classList.add('notification-show'), 10);
+                
+                if (duration > 0) {
+                    setTimeout(() => {
+                        notification.classList.add('notification-hiding');
+                        setTimeout(() => notification.remove(), 300);
+                    }, duration);
+                }
+                
+                return notification;
+            },
+            
+            getOrCreateContainer: function() {
+                let container = document.getElementById('notification-container');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.id = 'notification-container';
+                    container.className = 'notification-container';
+                    document.body.appendChild(container);
+                }
+                return container;
+            },
+            
+            getIconForType: function(type) {
+                const icons = {
+                    'success': 'fa-check-circle',
+                    'error': 'fa-exclamation-circle',
+                    'warning': 'fa-exclamation-triangle',
+                    'info': 'fa-info-circle'
+                };
+                return icons[type] || icons['info'];
+            }
+        };
+
+        // 全局变量
+        let menuStarManager;
+        let deviceSimulator;
+
+        // DOM加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化设备模拟器
+            deviceSimulator = new DeviceSimulator();
+            
+            // 初始化五角星管理器
+            setTimeout(() => {
+                menuStarManager = new MenuStarManager();
+            }, 100);
+
+            // 初始化全局BrainBase对象
+            window.BrainBase = {
+                notify: notificationSystem,
+                deviceSimulator: deviceSimulator
+            };
+            
+            // 下拉菜单功能
+            const menuToggle = document.getElementById('menuToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            let isDropdownOpen = false;
+            
+            // 下拉菜单分类切换功能
+            function initDropdownCategorySwitch() {
+                const categories = document.querySelectorAll('.dropdown-menu-category');
+                const sections = document.querySelectorAll('.dropdown-menu-section');
+                
+                categories.forEach(category => {
+                    category.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const targetCategory = this.getAttribute('data-category');
+                        
+                        // 移除所有活动状态
+                        categories.forEach(cat => cat.classList.remove('active'));
+                        sections.forEach(sec => sec.classList.remove('active'));
+                        
+                        // 设置当前分类为活动状态
+                        this.classList.add('active');
+                        
+                        // 显示对应的功能区域
+                        const targetSection = document.querySelector(`[data-section="${targetCategory}"]`);
+                        if (targetSection) {
+                            targetSection.classList.add('active');
+                        }
+                    });
+                });
+            }
+            
+            function toggleDropdown() {
+                isDropdownOpen = !isDropdownOpen;
+                
+                if (isDropdownOpen) {
+                    dropdownMenu.classList.add('active');
+                    menuToggle.classList.add('active');
+                    
+                    // 初始化分类切换功能
+                    initDropdownCategorySwitch();
+                    
+                    // 同步五角星状态
+                    if (menuStarManager) {
+                        menuStarManager.initStarStates();
+                    }
+                    
+                    // 添加点击外部关闭的事件监听
+                    setTimeout(() => {
+                        document.addEventListener('click', closeDropdownOnClickOutside);
+                    }, 10);
+                } else {
+                    dropdownMenu.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                    document.removeEventListener('click', closeDropdownOnClickOutside);
+                }
+            }
+            
+            function closeDropdown() {
+                if (isDropdownOpen) {
+                    isDropdownOpen = false;
+                    dropdownMenu.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                    document.removeEventListener('click', closeDropdownOnClickOutside);
+                }
+            }
+            
+            function closeDropdownOnClickOutside(event) {
+                const menuContainer = document.querySelector('.menu-button-container');
+                if (!menuContainer.contains(event.target)) {
+                    closeDropdown();
+                }
+            }
+            
+            // 菜单按钮点击事件
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toggleDropdown();
+                });
+            }
+            
+            // 菜单管理功能
+            const menuSettingsButton = document.getElementById('menuSettingsButton');
+            if (menuSettingsButton) {
+                menuSettingsButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // 显示菜单管理选项
+                    console.log('菜单管理功能点击');
+                });
+            }
+            
+            // 下拉菜单内部点击不关闭菜单（除非是链接）
+            if (dropdownMenu) {
+                dropdownMenu.addEventListener('click', function(e) {
+                    // 如果点击的是五角星，不做任何处理
+                    if (e.target.classList.contains('dropdown-menu-item-star')) {
+                        return;
+                    }
+                    
+                    // 如果点击的是菜单管理按钮，不关闭菜单
+                    if (e.target.closest('.menu-settings-button')) {
+                        e.stopPropagation();
+                        return;
+                    }
+                    
+                    // 如果点击的是菜单项（但不是五角星），关闭下拉菜单
+                    if (e.target.closest('.dropdown-menu-item') && !e.target.closest('.dropdown-menu-item-star')) {
+                        setTimeout(() => {
+                            closeDropdown();
+                        }, 100);
+                    } else {
+                        e.stopPropagation();
+                    }
+                });
+            }
+            
+            // ESC键关闭下拉菜单
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeDropdown();
+                }
+            });
+
+            // 调试工具
+            window.BrainBaseDebug = {
+                showStarredItems: function() {
+                    console.log('当前收藏的功能:', menuStarManager ? menuStarManager.starredItems : '管理器未初始化');
+                },
+                
+                resetStars: function() {
+                    if (menuStarManager) {
+                        menuStarManager.resetStars();
+                        console.log('收藏状态已重置');
+                    }
+                },
+                
+                selectDevice: function(deviceId) {
+                    if (deviceSimulator) {
+                        deviceSimulator.selectDevice(deviceId);
+                    }
+                },
+                
+                showDevices: function() {
+                    console.log('可用设备列表:');
+                    Object.entries(deviceConfigs).forEach(([id, config]) => {
+                        console.log(`- ${id}: ${config.name} (${config.width}×${config.height})`);
+                    });
+                },
+                
+                // 新增：全面设备测试功能
+                testAllDevices: function() {
+                    console.log('🧪 开始全面设备模拟测试...');
+                    
+                    const deviceTypes = {
+                        mobile: [],
+                        tablet: [],
+                        desktop: []
+                    };
+                    
+                    // 按类型分组设备
+                    Object.entries(deviceConfigs).forEach(([id, config]) => {
+                        deviceTypes[config.type].push({ id, ...config });
+                    });
+                    
+                    console.log('📱 手机设备 (6款):');
+                    deviceTypes.mobile.forEach(device => {
+                        console.log(`  ✓ ${device.name} - ${device.width}×${device.height}`);
+                    });
+                    
+                    console.log('📟 平板设备 (4款):');
+                    deviceTypes.tablet.forEach(device => {
+                        console.log(`  ✓ ${device.name} - ${device.width}×${device.height}`);
+                    });
+                    
+                    console.log('🖥️ 桌面设备 (3款):');
+                    deviceTypes.desktop.forEach(device => {
+                        console.log(`  ✓ ${device.name} - ${device.width}×${device.height}`);
+                    });
+                    
+                    console.log(`\n📊 统计信息:`);
+                    console.log(`- 总设备数: ${Object.keys(deviceConfigs).length}`);
+                    console.log(`- 手机设备: ${deviceTypes.mobile.length}款`);
+                    console.log(`- 平板设备: ${deviceTypes.tablet.length}款`);
+                    console.log(`- 桌面设备: ${deviceTypes.desktop.length}款`);
+                    
+                    return deviceTypes;
+                },
+                
+                // 验证设备数据完整性
+                validateDevices: function() {
+                    console.log('🔍 验证设备数据完整性...');
+                    
+                    let errors = [];
+                    let warnings = [];
+                    
+                    Object.entries(deviceConfigs).forEach(([id, config]) => {
+                        // 检查必需字段
+                        if (!config.name) errors.push(`${id}: 缺少设备名称`);
+                        if (!config.width || !config.height) errors.push(`${id}: 缺少尺寸数据`);
+                        if (!config.type) errors.push(`${id}: 缺少设备类型`);
+                        
+                        // 检查数据类型
+                        if (typeof config.width !== 'number') errors.push(`${id}: 宽度应为数字`);
+                        if (typeof config.height !== 'number') errors.push(`${id}: 高度应为数字`);
+                        
+                        // 检查设备类型
+                        if (!['mobile', 'tablet', 'desktop'].includes(config.type)) {
+                            errors.push(`${id}: 设备类型无效 (${config.type})`);
+                        }
+                        
+                        // 检查分辨率合理性
+                        if (config.type === 'mobile' && (config.width > 500 || config.height > 1000)) {
+                            warnings.push(`${id}: 手机分辨率可能过大`);
+                        }
+                        if (config.type === 'desktop' && (config.width < 1000 || config.height < 600)) {
+                            warnings.push(`${id}: 桌面分辨率可能过小`);
+                        }
+                    });
+                    
+                    if (errors.length === 0) {
+                        console.log('✅ 所有设备数据验证通过');
+                    } else {
+                        console.error('❌ 发现错误:', errors);
+                    }
+                    
+                    if (warnings.length > 0) {
+                        console.warn('⚠️ 警告:', warnings);
+                    }
+                    
+                    return { errors, warnings };
+                },
+                
+                // 测试旋转功能
+                testRotation: function() {
+                    console.log('🔄 测试设备旋转功能...');
+                    
+                    if (!deviceSimulator.isOpen) {
+                        console.log('请先选择一个设备进行模拟');
+                        return;
+                    }
+                    
+                    const currentConfig = deviceSimulator.getCurrentDevice();
+                    if (!currentConfig) {
+                        console.log('未找到当前设备配置');
+                        return;
+                    }
+                    
+                    if (currentConfig.type === 'desktop') {
+                        console.log('🖥️ 桌面设备不支持旋转');
+                        return;
+                    }
+                    
+                    console.log(`📱 ${currentConfig.name} 旋转测试:`);
+                    console.log(`- 竖屏: ${currentConfig.width}×${currentConfig.height}`);
+                    console.log(`- 横屏: ${currentConfig.height}×${currentConfig.width}`);
+                    
+                    // 自动测试旋转
+                    deviceSimulator.rotateDevice();
+                    setTimeout(() => {
+                        console.log('✅ 旋转功能测试完成');
+                    }, 500);
+                },
+                
+                // 快速切换设备测试
+                quickTest: function() {
+                    console.log('⚡ 快速设备切换测试...');
+                    
+                    const testDevices = [
+                        'iphone-14-pro',
+                        'ipad-air', 
+                        'desktop-1920'
+                    ];
+                    
+                    let index = 0;
+                    const testNext = () => {
+                        if (index < testDevices.length) {
+                            const deviceId = testDevices[index];
+                            const config = deviceConfigs[deviceId];
+                            console.log(`📲 测试: ${config.name}`);
+                            BrainBaseDebug.selectDevice(deviceId);
+                            index++;
+                            setTimeout(testNext, 2000);
+                        } else {
+                            console.log('✅ 快速测试完成');
+                        }
+                    };
+                    
+                    testNext();
+                },
+                
+                help: function() {
+                    console.log(`
+🔧 BrainBase 设备模拟器调试工具
+
+基础功能：
+- BrainBaseDebug.showDevices() - 查看所有可用设备
+- BrainBaseDebug.selectDevice('iphone-14-pro') - 选择特定设备
+
+测试功能：
+- BrainBaseDebug.testAllDevices() - 显示完整设备清单
+- BrainBaseDebug.validateDevices() - 验证设备数据完整性
+- BrainBaseDebug.testRotation() - 测试当前设备旋转功能
+- BrainBaseDebug.quickTest() - 快速切换设备测试
+
+收藏管理：
+- BrainBaseDebug.showStarredItems() - 查看当前收藏
+- BrainBaseDebug.resetStars() - 重置收藏状态
+
+设备ID列表：
+手机: iphone-14-pro-max, iphone-14-pro, iphone-se, samsung-s23-ultra, samsung-s23, pixel-7-pro
+平板: ipad-air, ipad-mini, galaxy-tab-s8, surface-pro
+桌面: desktop-1920, desktop-1440, laptop-1366
+                    `);
+                }
+            };
+
+            console.log('🎉 BrainBase 系统已完全加载！');
+            console.log('💡 输入 BrainBaseDebug.help() 查看使用说明');
+        });
+    </script>
+</body>
+</html>
