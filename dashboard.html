@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainBase - 仪表盘</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* 通用样式 */
+        .gitee-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e1e4e8;
+            height: 60px;
+            z-index: 25000;
+        }
+        .gitee-sidebar {
+            background: rgba(248, 249, 250, 0.95);
+            width: 80px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            overflow-y: auto;
+            overflow-x: visible;
+            position: fixed;
+            left: 0;
+            top: 60px;
+            max-height: calc(100vh - 60px);
+            height: calc(100vh - 60px);
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 2px 12px rgba(108, 117, 125, 0.08);
+            z-index: 50;
+            transform: translateX(0);
+        }
+        .gitee-sidebar:hover {
+            width: 200px;
+        }
+        .gitee-content {
+            background: #ffffff;
+            min-height: calc(100vh - 60px);
+            margin-left: 80px;
+            transition: margin-left 0.3s ease;
+            width: calc(100% - 80px);
+        }
+        .gitee-nav-item {
+            color: #6c757d;
+            padding: 6px 0;
+            border-radius: 8px;
+            margin: 1px 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            font-size: 12px;
+            text-decoration: none;
+            position: relative;
+            overflow: visible;
+            width: 50px;
+            height: auto;
+            justify-content: center;
+            opacity: 1;
+            transform: scale(1);
+        }
+        .gitee-nav-item i {
+            font-size: 18px;
+            margin-bottom: 2px;
+            margin-right: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 2;
+        }
+        .gitee-nav-item .nav-text {
+            opacity: 1;
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.1;
+            margin-top: 1px;
+            transition: opacity 0.3s ease;
+            display: block;
+        }
+        .gitee-nav-item .nav-text-full {
+            position: absolute;
+            left: 68px;
+            top: 50%;
+            transform: translateY(-50%) translateX(-8px);
+            opacity: 0;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.2;
+            white-space: nowrap;
+            color: #495057;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 4px 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(222, 226, 230, 0.8);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 100;
+            pointer-events: none;
+            backdrop-filter: blur(8px);
+        }
+        .gitee-sidebar:hover .gitee-nav-item .nav-text-full {
+            opacity: 1;
+            transform: translateY(-50%) translateX(0);
+            pointer-events: auto;
+        }
+        
+        /* 设备模拟切换按钮样式 */
+        .device-simulator-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .device-simulator-toggle {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #6c757d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        
+        .device-simulator-toggle:hover {
+            background: #f8f9fa;
+            border-color: #007bff;
+            color: #007bff;
+            transform: scale(1.05);
+        }
+        
+        /* 设备选择下拉菜单 */
+        .device-selector-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 320px;
+            max-height: 480px;
+            background: white;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            margin-top: 8px;
+        }
+        
+        .device-selector-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .device-category {
+            border-bottom: 1px solid #f1f3f4;
+        }
+        
+        .device-category:last-child {
+            border-bottom: none;
+        }
+        
+        .device-category-title {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            color: #495057;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .device-list {
+            padding: 8px 0;
+        }
+        
+        .device-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid transparent;
+        }
+        
+        .device-item:hover {
+            background: #f8f9fa;
+            border-left-color: #007bff;
+        }
+        
+        .device-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #212529;
+        }
+        
+        .device-specs {
+            font-size: 12px;
+            color: #6c757d;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* 设备模拟模式样式 */
+        .device-mode-mobile .gitee-sidebar {
+            position: fixed !important;
+            left: 0 !important;
+            top: auto !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            height: 80px !important;
+            max-height: 80px !important;
+            transform: translateX(0) !important;
+            background: rgba(248, 249, 250, 0.98) !important;
+            backdrop-filter: blur(10px) !important;
+            border-radius: 0 !important;
+            border-top: 1px solid rgba(222, 226, 230, 0.8) !important;
+            box-shadow: 0 -2px 20px rgba(108, 117, 125, 0.15) !important;
+            z-index: 100 !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+        }
+        
+        .device-mode-mobile .gitee-sidebar .py-4 {
+            padding: 8px 12px !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 100% !important;
+            gap: 8px !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+        }
+        
+        .device-mode-mobile .gitee-sidebar .gitee-nav-item {
+            width: 60px !important;
+            height: 60px !important;
+            min-width: 60px !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+            padding: 6px 4px !important;
+            margin: 0 !important;
+            text-align: center !important;
+            border-radius: 8px !important;
+            flex-shrink: 0 !important;
+        }
+        
+        .device-mode-mobile .gitee-content {
+            margin-left: 0 !important;
+            width: 100% !important;
+            margin-bottom: 80px !important;
+        }
+        
+        /* 平板模式样式 */
+        .device-mode-tablet .gitee-sidebar {
+            width: 200px !important;
+        }
+        
+        .device-mode-tablet .gitee-content {
+            margin-left: 200px !important;
+            width: calc(100% - 200px) !important;
+        }
+        
+        /* 侧边栏图钉样式 - 美化版 */
+        .sidebar-pin {
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #8e9aa7 0%, #6c757d 50%, #5a636b 100%);
+            border-radius: 2px 8px 2px 2px;
+            transform: rotate(45deg);
+            box-shadow: 
+                0 1px 3px rgba(0, 0, 0, 0.2),
+                0 0 0 0.5px rgba(255, 255, 255, 0.1) inset,
+                0 1px 0 rgba(255, 255, 255, 0.2) inset;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            border: 0.5px solid rgba(108, 117, 125, 0.3);
+        }
+        
+        .sidebar-pin::before {
+            content: '';
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 3px;
+            height: 3px;
+            background: radial-gradient(circle, #ffffff 0%, #f8f9fa  40%, #e9ecef 100%);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 0 0.5px rgba(108, 117, 125, 0.4),
+                0 1px 2px rgba(0, 0, 0, 0.1) inset;
+            border: 0.5px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .sidebar-pin.enabled {
+            opacity: 0.75;
+            visibility: visible;
+            transform: rotate(45deg) scale(1);
+        }
+        
+        .gitee-nav-item:hover .sidebar-pin.enabled {
+            transform: rotate(45deg) scale(1.15);
+            background: linear-gradient(135deg, #a8b3c0 0%, #495057 50%, #343a40 100%);
+            opacity: 0.9;
+            box-shadow: 
+                0 2px 6px rgba(0, 0, 0, 0.25),
+                0 0 0 0.5px rgba(255, 255, 255, 0.15) inset,
+                0 1px 0 rgba(255, 255, 255, 0.25) inset;
+        }
+        
+        /* 图钉在不同设备模式下的适配 - 美化版 */
+        .device-mode-mobile .sidebar-pin {
+            bottom: 1px;
+            right: 1px;
+            width: 6px;
+            height: 6px;
+            border-radius: 1px 6px 1px 1px;
+        }
+        
+        .device-mode-mobile .sidebar-pin::before {
+            width: 2px;
+            height: 2px;
+            top: 0.5px;
+            left: 0.5px;
+        }
+        
+        .device-mode-tablet .sidebar-pin {
+            bottom: 2px;
+            right: 2px;
+            width: 7px;
+            height: 7px;
+            border-radius: 1.5px 7px 1.5px 1.5px;
+        }
+        
+        .device-mode-tablet .sidebar-pin::before {
+            width: 2.5px;
+            height: 2.5px;
+            top: 0.5px;
+            left: 0.5px;
+        }
+        
+        /* 图钉固定状态样式 - 美化版 */
+        .sidebar-pin.pinned {
+            background: linear-gradient(135deg, #ff6b6b 0%, #dc3545 50%, #c82333 100%) !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            box-shadow: 
+                0 2px 8px rgba(220, 53, 69, 0.4),
+                0 0 0 0.5px rgba(255, 255, 255, 0.2) inset,
+                0 1px 0 rgba(255, 255, 255, 0.3) inset,
+                0 0 12px rgba(220, 53, 69, 0.3) !important;
+            animation: pinnedGlow 3s ease-in-out infinite;
+            border: 0.5px solid rgba(220, 53, 69, 0.6);
+        }
+        
+        .sidebar-pin.pinned::before {
+            background: radial-gradient(circle, #ffffff 0%, #ffe6e6 40%, #ffcccc 100%);
+            box-shadow: 
+                0 0 0 0.5px rgba(220, 53, 69, 0.6),
+                0 1px 2px rgba(0, 0, 0, 0.1) inset;
+            border: 0.5px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .gitee-nav-item:hover .sidebar-pin.pinned {
+            transform: rotate(45deg) scale(1.25) !important;
+            background: linear-gradient(135deg, #ff5252 0%, #c82333 50%, #bd2130 100%) !important;
+            box-shadow: 
+                0 3px 12px rgba(220, 53, 69, 0.6),
+                0 0 0 0.5px rgba(255, 255, 255, 0.25) inset,
+                0 1px 0 rgba(255, 255, 255, 0.35) inset,
+                0 0 16px rgba(220, 53, 69, 0.5) !important;
+            animation: pinnedIntense 1.5s ease-in-out infinite;
+        }
+        
+        /* 图钉固定状态发光动画 - 更柔和 */
+        @keyframes pinnedGlow {
+            0%, 100% {
+                opacity: 1;
+                filter: brightness(1);
+            }
+            50% {
+                opacity: 0.85;
+                filter: brightness(1.1);
+            }
+        }
+        
+        /* 图钉悬停时的强烈动画 */
+        @keyframes pinnedIntense {
+            0%, 100% {
+                filter: brightness(1) saturate(1);
+            }
+            50% {
+                filter: brightness(1.15) saturate(1.1);
+            }
+        }
+        
+        /* 图钉点击效果 - 增强版 */
+        .sidebar-pin:hover {
+            cursor: pointer;
+            transform: rotate(45deg) scale(1.15);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .sidebar-pin:active {
+            transform: rotate(45deg) scale(0.85);
+            transition: all 0.1s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 顶部导航栏 -->
+    <header class="gitee-header fixed w-full top-0 z-50">
+        <div class="flex items-center justify-between h-full px-4">
+            <!-- 左侧：Logo和导航 -->
+            <div class="flex items-center">
+                <div class="flex items-center">
+                    <div class="h-8 w-8 bg-blue-600 rounded flex items-center justify-center">
+                        <i class="fas fa-user-shield text-white text-sm"></i>
+                    </div>
+                    <span class="ml-2 text-lg font-semibold text-gray-900">BrainBase</span>
+                </div>
+            </div>
+            <!-- 右侧：搜索和用户信息 -->
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="用户头像">
+                    <span class="text-sm font-medium text-gray-700 hidden md:block">张工程师</span>
+                    
+                    <!-- 设备模拟切换按钮 -->
+                    <div class="device-simulator-container" id="deviceSimulatorContainer">
+                        <button class="device-simulator-toggle" id="deviceSimulatorToggle">
+                            <i class="fas fa-mobile-alt" id="deviceIcon"></i>
+                        </button>
+                        
+                        <!-- 设备选择下拉菜单 -->
+                        <div class="device-selector-dropdown" id="deviceSelectorDropdown">
+                            <div class="device-category" data-category="mobile">
+                                <div class="device-category-title">
+                                    <i class="fas fa-mobile-alt"></i>
+                                    手机设备
+                                </div>
+                                <div class="device-list">
+                                    <div class="device-item" data-device="iphone-14-pro-max">
+                                        <div class="device-name">iPhone 14 Pro Max</div>
+                                        <div class="device-specs">430×932</div>
+                                    </div>
+                                    <div class="device-item" data-device="iphone-14-pro">
+                                        <div class="device-name">iPhone 14 Pro</div>
+                                        <div class="device-specs">393×852</div>
+                                    </div>
+                                    <div class="device-item" data-device="iphone-se">
+                                        <div class="device-name">iPhone SE</div>
+                                        <div class="device-specs">375×667</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="device-category" data-category="tablet">
+                                <div class="device-category-title">
+                                    <i class="fas fa-tablet-alt"></i>
+                                    平板设备
+                                </div>
+                                <div class="device-list">
+                                    <div class="device-item" data-device="ipad-air">
+                                        <div class="device-name">iPad Air</div>
+                                        <div class="device-specs">820×1180</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="device-category" data-category="desktop">
+                                <div class="device-category-title">
+                                    <i class="fas fa-desktop"></i>
+                                    桌面设备
+                                </div>
+                                <div class="device-list">
+                                    <div class="device-item" data-device="desktop-1920">
+                                        <div class="device-name">标准桌面</div>
+                                        <div class="device-specs">1920×1080</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex pt-16">
+        <!-- 左侧导航栏 -->
+        <aside id="sidebar" class="gitee-sidebar">
+            <div class="py-4 relative z-10">
+                <!-- 仪表盘 -->
+                <a href="dashboard.html" class="gitee-nav-item" data-menu-id="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-text">仪表盘</span>
+                    <span class="nav-text-full">仪表盘</span>
+                    <div class="sidebar-pin" data-pin="dashboard"></div>
+                </a>
+                
+                <!-- 用户管理 -->
+                <a href="user-management.html" class="gitee-nav-item" data-menu-id="user-management">
+                    <i class="fas fa-users"></i>
+                    <span class="nav-text">用户</span>
+                    <span class="nav-text-full">用户管理</span>
+                    <div class="sidebar-pin" data-pin="user-management"></div>
+                </a>
+                
+                <!-- 角色管理 -->
+                <a href="role-management.html" class="gitee-nav-item" data-menu-id="role-management">
+                    <i class="fas fa-user-tag"></i>
+                    <span class="nav-text">角色</span>
+                    <span class="nav-text-full">角色管理</span>
+                    <div class="sidebar-pin" data-pin="role-management"></div>
+                </a>
+                
+                <!-- 设置 -->
+                <a href="system-settings.html" class="gitee-nav-item" data-menu-id="system-settings">
+                    <i class="fas fa-cog"></i>
+                    <span class="nav-text">设置</span>
+                    <span class="nav-text-full">系统设置</span>
+                    <div class="sidebar-pin" data-pin="system-settings"></div>
+                </a>
+            </div>
+        </aside>
+
+        <!-- 主内容区域 -->
+        <main class="gitee-content p-6">
+            <div class="max-w-7xl mx-auto">
+                <h1 class="text-2xl font-bold text-gray-900 mb-6">仪表盘</h1>
+                
+                <!-- 统计卡片 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">总用户数</p>
+                                <p class="text-2xl font-semibold text-gray-900">1,234</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-600">
+                                <i class="fas fa-user-check text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">活跃用户</p>
+                                <p class="text-2xl font-semibold text-gray-900">892</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                                <i class="fas fa-user-tag text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">角色数量</p>
+                                <p class="text-2xl font-semibold text-gray-900">15</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-orange-100 text-orange-600">
+                                <i class="fas fa-shield-alt text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">权限配置</p>
+                                <p class="text-2xl font-semibold text-gray-900">67</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 图表区域 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">用户增长趋势</h3>
+                        <div class="h-64 flex items-center justify-center bg-gray-50 rounded">
+                            <p class="text-gray-500">图表占位区域</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">权限分布</h3>
+                        <div class="h-64 flex items-center justify-center bg-gray-50 rounded">
+                            <p class="text-gray-500">图表占位区域</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 设备模拟器 JavaScript -->
+    <script>
+        // 设备配置数据
+        const deviceConfigs = {
+            'iphone-14-pro-max': { name: 'iPhone 14 Pro Max', width: 430, height: 932, type: 'mobile' },
+            'iphone-14-pro': { name: 'iPhone 14 Pro', width: 393, height: 852, type: 'mobile' },
+            'iphone-se': { name: 'iPhone SE', width: 375, height: 667, type: 'mobile' },
+            'ipad-air': { name: 'iPad Air', width: 820, height: 1180, type: 'tablet' },
+            'desktop-1920': { name: '标准桌面', width: 1920, height: 1080, type: 'desktop' }
+        };
+
+        // 设备模拟器类
+        class DeviceSimulator {
+            constructor() {
+                this.currentDevice = null;
+                this.isOpen = false;
+                this.isRotated = false;
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                console.log('🎮 设备模拟器已初始化');
+            }
+
+            bindEvents() {
+                // 设备切换按钮点击事件
+                const toggle = document.getElementById('deviceSimulatorToggle');
+                if (toggle) {
+                    toggle.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.toggleDropdown();
+                    });
+                }
+
+                // 设备选择事件
+                const dropdown = document.getElementById('deviceSelectorDropdown');
+                if (dropdown) {
+                    dropdown.addEventListener('click', (e) => {
+                        const deviceItem = e.target.closest('.device-item');
+                        if (deviceItem) {
+                            const deviceId = deviceItem.getAttribute('data-device');
+                            this.selectDevice(deviceId);
+                        }
+                    });
+                }
+
+                // 关闭下拉菜单的事件
+                document.addEventListener('click', (e) => {
+                    const container = document.getElementById('deviceSimulatorContainer');
+                    if (container && !container.contains(e.target)) {
+                        this.closeDropdown();
+                    }
+                });
+
+                // ESC键关闭模拟器
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.isOpen) {
+                        this.closeSimulator();
+                    }
+                });
+            }
+
+            toggleDropdown() {
+                const dropdown = document.getElementById('deviceSelectorDropdown');
+                if (dropdown) {
+                    dropdown.classList.toggle('active');
+                }
+            }
+
+            closeDropdown() {
+                const dropdown = document.getElementById('deviceSelectorDropdown');
+                if (dropdown) {
+                    dropdown.classList.remove('active');
+                }
+            }
+
+            selectDevice(deviceId) {
+                const config = deviceConfigs[deviceId];
+                if (!config) return;
+
+                this.closeDropdown();
+                
+                if (this.isOpen) {
+                    // 切换设备
+                    this.closeSimulator();
+                    setTimeout(() => {
+                        this.currentDevice = deviceId;
+                        this.openSimulator(config);
+                        this.updateButtonIcon(config.type);
+                    }, 300);
+                } else {
+                    // 首次启动
+                    this.currentDevice = deviceId;
+                    this.openSimulator(config);
+                    this.updateButtonIcon(config.type);
+                }
+            }
+
+            updateButtonIcon(deviceType) {
+                const icon = document.getElementById('deviceIcon');
+                if (icon) {
+                    // 添加缩放动画效果
+                    icon.style.transform = 'scale(0.8)';
+                    icon.style.transition = 'all 0.2s ease';
+                    
+                    setTimeout(() => {
+                        const iconMap = {
+                            'mobile': 'fas fa-mobile-alt',
+                            'tablet': 'fas fa-tablet-alt',
+                            'desktop': 'fas fa-desktop'
+                        };
+                        
+                        // 更新图标类名
+                        icon.className = iconMap[deviceType] || 'fas fa-mobile-alt';
+                        
+                        // 恢复原始大小
+                        icon.style.transform = 'scale(1)';
+                        
+                        // 添加颜色变化效果，根据设备类型显示不同颜色
+                        const colorMap = {
+                            'mobile': '#007bff',   // 蓝色 - 手机
+                            'tablet': '#28a745',   // 绿色 - 平板  
+                            'desktop': '#6c757d'   // 灰色 - 桌面
+                        };
+                        
+                        icon.style.color = colorMap[deviceType] || '#007bff';
+                        
+                        // 0.5秒后恢复默认颜色
+                        setTimeout(() => {
+                            icon.style.color = '';
+                        }, 500);
+                        
+                    }, 100);
+                    
+                    console.log(`🎯 模拟器按钮图标已更新: ${deviceType}`);
+                }
+            }
+
+            openSimulator(config) {
+                console.log(`🚀 启动设备模拟器: ${config.name}`);
+                
+                // 获取实际尺寸（考虑旋转）
+                let { width, height } = config;
+                if (this.isRotated && config.type !== 'desktop') {
+                    [width, height] = [height, width];
+                }
+                
+                // 创建设备模拟容器
+                this.createSimulatorContainer(config, width, height);
+                
+                this.isOpen = true;
+                
+                console.log(`✅ 设备模拟器启动完成: ${config.name} (${width}×${height})`);
+            }
+
+            createSimulatorContainer(config, width, height) {
+                // 移除现有容器
+                this.removeSimulatorContainer();
+                
+                // 创建模拟器容器
+                const container = document.createElement('div');
+                container.id = 'device-simulator-container';
+                container.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    z-index: 9999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                    box-sizing: border-box;
+                `;
+                
+                // 创建设备框架
+                const deviceFrame = document.createElement('div');
+                deviceFrame.id = 'device-frame';
+                
+                // 计算合适的缩放比例
+                const maxWidth = window.innerWidth - 100;
+                const maxHeight = window.innerHeight - 100;
+                const scale = Math.min(maxWidth / width, maxHeight / height, 1);
+                
+                const finalWidth = width * scale;
+                const finalHeight = height * scale;
+                
+                if (config.type === 'mobile') {
+                    deviceFrame.style.cssText = `
+                        width: ${finalWidth}px;
+                        height: ${finalHeight}px;
+                        background: #000;
+                        border-radius: ${25 * scale}px;
+                        padding: ${15 * scale}px;
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                        position: relative;
+                    `;
+                } else if (config.type === 'tablet') {
+                    deviceFrame.style.cssText = `
+                        width: ${finalWidth}px;
+                        height: ${finalHeight}px;
+                        background: #333;
+                        border-radius: ${15 * scale}px;
+                        padding: ${20 * scale}px;
+                        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+                        position: relative;
+                    `;
+                } else {
+                    deviceFrame.style.cssText = `
+                        width: ${finalWidth}px;
+                        height: ${finalHeight}px;
+                        background: #fff;
+                        border-radius: 8px;
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                        position: relative;
+                        overflow: hidden;
+                    `;
+                }
+                
+                // 创建iframe
+                const iframe = document.createElement('iframe');
+                iframe.id = 'device-screen';
+                iframe.src = window.location.href; // 加载当前页面
+                iframe.style.cssText = `
+                    width: 100%;
+                    height: 100%;
+                    border: none;
+                    border-radius: ${config.type === 'desktop' ? '4px' : (config.type === 'mobile' ? '20px' : '10px')};
+                    background: white;
+                `;
+                
+                deviceFrame.appendChild(iframe);
+                container.appendChild(deviceFrame);
+                
+                // 添加设备信息
+                const deviceInfo = document.createElement('div');
+                deviceInfo.style.cssText = `
+                    position: absolute;
+                    bottom: -50px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(0, 0, 0, 0.8);
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    backdrop-filter: blur(8px);
+                    white-space: nowrap;
+                `;
+                
+                const orientationText = this.isRotated && config.type !== 'desktop' ? ' (横屏)' : '';
+                deviceInfo.textContent = `${config.name} - ${width}×${height}${orientationText}`;
+                
+                deviceFrame.appendChild(deviceInfo);
+                
+                // 添加控制按钮
+                this.addControls(container, config);
+                
+                document.body.appendChild(container);
+                
+                // 防止页面滚动
+                document.body.style.overflow = 'hidden';
+            }
+
+            addControls(container, config) {
+                const controls = document.createElement('div');
+                controls.style.cssText = `
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    display: flex;
+                    gap: 12px;
+                    z-index: 10001;
+                `;
+                
+                // 旋转按钮（仅非桌面设备）
+                if (config.type !== 'desktop') {
+                    const rotateBtn = document.createElement('button');
+                    rotateBtn.innerHTML = '<i class="fas fa-redo"></i>';
+                    rotateBtn.title = '旋转设备';
+                    rotateBtn.style.cssText = `
+                        width: 44px;
+                        height: 44px;
+                        border: none;
+                        border-radius: 8px;
+                        background: rgba(255, 255, 255, 0.95);
+                        color: #495057;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 16px;
+                        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+                        transition: all 0.3s ease;
+                    `;
+                    
+                    rotateBtn.addEventListener('mouseenter', () => {
+                        rotateBtn.style.background = 'rgba(0, 123, 255, 0.95)';
+                        rotateBtn.style.color = 'white';
+                        rotateBtn.style.transform = 'scale(1.1)';
+                    });
+                    
+                    rotateBtn.addEventListener('mouseleave', () => {
+                        rotateBtn.style.background = 'rgba(255, 255, 255, 0.95)';
+                        rotateBtn.style.color = '#495057';
+                        rotateBtn.style.transform = 'scale(1)';
+                    });
+                    
+                    rotateBtn.addEventListener('click', () => {
+                        this.rotateDevice();
+                    });
+                    
+                    controls.appendChild(rotateBtn);
+                }
+                
+                // 关闭按钮
+                const closeBtn = document.createElement('button');
+                closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                closeBtn.title = '关闭模拟器';
+                closeBtn.style.cssText = `
+                    width: 44px;
+                    height: 44px;
+                    border: none;
+                    border-radius: 8px;
+                    background: rgba(255, 255, 255, 0.95);
+                    color: #495057;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 16px;
+                    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+                    transition: all 0.3s ease;
+                `;
+                
+                closeBtn.addEventListener('mouseenter', () => {
+                    closeBtn.style.background = 'rgba(220, 53, 69, 0.95)';
+                    closeBtn.style.color = 'white';
+                    closeBtn.style.transform = 'scale(1.1)';
+                });
+                
+                closeBtn.addEventListener('mouseleave', () => {
+                    closeBtn.style.background = 'rgba(255, 255, 255, 0.95)';
+                    closeBtn.style.color = '#495057';
+                    closeBtn.style.transform = 'scale(1)';
+                });
+                
+                closeBtn.addEventListener('click', () => {
+                    this.closeSimulator();
+                });
+                
+                controls.appendChild(closeBtn);
+                container.appendChild(controls);
+            }
+
+            rotateDevice() {
+                if (!this.currentDevice) return;
+                
+                const config = deviceConfigs[this.currentDevice];
+                if (config.type === 'desktop') return;
+
+                this.isRotated = !this.isRotated;
+                console.log(`🔄 设备旋转: ${config.name} - ${this.isRotated ? '横屏' : '竖屏'}`);
+                
+                // 重新创建模拟器容器
+                let { width, height } = config;
+                if (this.isRotated) {
+                    [width, height] = [height, width];
+                }
+                
+                this.createSimulatorContainer(config, width, height);
+            }
+
+            removeSimulatorContainer() {
+                const container = document.getElementById('device-simulator-container');
+                if (container) {
+                    container.remove();
+                }
+            }
+
+            showControls() {
+                // 控制按钮已经在createSimulatorContainer中创建
+            }
+
+            closeSimulator() {
+                console.log('🔄 正在关闭设备模拟器...');
+                
+                // 移除模拟器容器
+                this.removeSimulatorContainer();
+                
+                // 恢复页面滚动
+                document.body.style.overflow = '';
+                
+                // 重置按钮图标为默认状态
+                const icon = document.getElementById('deviceIcon');
+                if (icon) {
+                    icon.className = 'fas fa-mobile-alt'; // 默认显示移动设备图标
+                }
+                
+                // 重置状态
+                this.isOpen = false;
+                this.isRotated = false;
+                this.currentDevice = null;
+                
+                console.log('✅ 设备模拟器已关闭');
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            const deviceSimulator = new DeviceSimulator();
+            
+            // 简化的图钉管理器（与主模板保持同步）
+            class SimplePinManager {
+                constructor() {
+                    this.pinsEnabled = this.loadPinSetting();
+                    this.init();
+                }
+                
+                loadPinSetting() {
+                    try {
+                        const saved = localStorage.getItem('brainbase-pins-enabled');
+                        return saved ? JSON.parse(saved) : true; // 默认启用
+                    } catch (e) {
+                        return true; // 默认启用
+                    }
+                }
+                
+                init() {
+                    this.updatePinDisplay();
+                    console.log(`📌 仪表盘图钉管理器已初始化 - 状态: ${this.pinsEnabled ? '启用' : '禁用'}`);
+                }
+                
+                updatePinDisplay() {
+                    const pins = document.querySelectorAll('.sidebar-pin');
+                    pins.forEach(pin => {
+                        if (this.pinsEnabled) {
+                            pin.classList.add('enabled');
+                        } else {
+                            pin.classList.remove('enabled');
+                        }
+                    });
+                }
+                
+                isPinsEnabled() {
+                    return this.pinsEnabled;
+                }
+            }
+            
+            // 简化的图钉固定功能管理器（与主模板保持同步）
+            class SimplePinFixManager {
+                constructor() {
+                    this.pinnedItems = this.loadPinnedItems();
+                    this.pinClickEnabled = this.loadPinClickSetting();
+                    this.init();
+                }
+                
+                loadPinnedItems() {
+                    try {
+                        const saved = localStorage.getItem('brainbase-pinned-items');
+                        return saved ? JSON.parse(saved) : [];
+                    } catch (e) {
+                        return [];
+                    }
+                }
+                
+                loadPinClickSetting() {
+                    try {
+                        const saved = localStorage.getItem('brainbase-pin-click-enabled');
+                        return saved ? JSON.parse(saved) : true;
+                    } catch (e) {
+                        return true;
+                    }
+                }
+                
+                init() {
+                    this.bindPinClickEvents();
+                    this.updatePinStates();
+                    console.log(`📌 仪表盘图钉固定功能已初始化 - 固定项目: ${this.pinnedItems.length}个`);
+                }
+                
+                bindPinClickEvents() {
+                    document.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('sidebar-pin')) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            if (!this.pinClickEnabled) {
+                                console.log('📌 图钉点击功能已禁用');
+                                return;
+                            }
+                            
+                            const pinElement = e.target;
+                            const menuId = pinElement.getAttribute('data-pin');
+                            
+                            if (menuId) {
+                                this.togglePinFixed(menuId, pinElement);
+                            }
+                        }
+                    });
+                }
+                
+                togglePinFixed(menuId, pinElement) {
+                    const isPinned = this.pinnedItems.includes(menuId);
+                    
+                    if (isPinned) {
+                        this.pinnedItems = this.pinnedItems.filter(id => id !== menuId);
+                        pinElement.classList.remove('pinned');
+                        console.log(`📌 取消固定: ${menuId}`);
+                    } else {
+                        this.pinnedItems.push(menuId);
+                        pinElement.classList.add('pinned');
+                        console.log(`📌 固定项目: ${menuId}`);
+                    }
+                    
+                    // 保存到localStorage，与主模板同步
+                    try {
+                        localStorage.setItem('brainbase-pinned-items', JSON.stringify(this.pinnedItems));
+                    } catch (e) {
+                        console.error('保存固定项目失败:', e);
+                    }
+                    
+                    // 添加点击动画效果
+                    pinElement.style.transform = 'rotate(45deg) scale(1.3)';
+                    setTimeout(() => {
+                        pinElement.style.transform = '';
+                    }, 200);
+                }
+                
+                updatePinStates() {
+                    const pins = document.querySelectorAll('.sidebar-pin');
+                    pins.forEach(pin => {
+                        const menuId = pin.getAttribute('data-pin');
+                        if (this.pinnedItems.includes(menuId)) {
+                            pin.classList.add('pinned');
+                        } else {
+                            pin.classList.remove('pinned');
+                        }
+                    });
+                }
+            }
+            
+            // 初始化图钉管理器
+            const pinManager = new SimplePinManager();
+            
+            // 初始化图钉固定功能管理器
+            const pinFixManager = new SimplePinFixManager();
+            
+            // 监听localStorage变化，同步图钉状态
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'brainbase-pins-enabled') {
+                    pinManager.pinsEnabled = e.newValue ? JSON.parse(e.newValue) : false;
+                    pinManager.updatePinDisplay();
+                    console.log(`📌 图钉状态已同步: ${pinManager.pinsEnabled ? '启用' : '禁用'}`);
+                }
+            });
+            
+            // 全局调试工具
+            window.BrainBaseDebug = {
+                selectDevice: (deviceId) => deviceSimulator.selectDevice(deviceId),
+                closeSimulator: () => deviceSimulator.closeSimulator(),
+                showDevices: () => {
+                    console.log('可用设备:');
+                    Object.entries(deviceConfigs).forEach(([id, config]) => {
+                        console.log(`- ${id}: ${config.name} (${config.width}×${config.height})`);
+                    });
+                },
+                showPinStatus: () => {
+                    console.log(`📌 当前图钉显示状态: ${pinManager.isPinsEnabled() ? '启用' : '禁用'}`);
+                    return pinManager.isPinsEnabled();
+                }
+            };
+            
+            console.log('🎉 BrainBase 仪表盘已加载完成！');
+            console.log('💡 输入 BrainBaseDebug.showPinStatus() 查看图钉状态');
+        });
+    </script>
+</body>
+</html> 

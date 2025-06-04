@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备模拟器测试页面</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .test-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+        h1 { text-align: center; margin-bottom: 30px; }
+        .device-info {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .test-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .emoji { font-size: 2em; margin-bottom: 10px; display: block; }
+    </style>
+</head>
+<body>
+    <h1>🎮 设备模拟器功能测试</h1>
+    
+    <div class="test-card">
+        <h2>📱 当前页面信息</h2>
+        <div class="device-info">
+            <strong>页面尺寸:</strong> <span id="pageSize">计算中...</span><br>
+            <strong>用户代理:</strong> <span id="userAgent">检测中...</span><br>
+            <strong>设备像素比:</strong> <span id="devicePixelRatio">计算中...</span>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2>🧪 测试功能区域</h2>
+        <div class="test-grid">
+            <div class="test-item">
+                <span class="emoji">📐</span>
+                <h3>响应式测试</h3>
+                <p>调整窗口大小查看效果</p>
+            </div>
+            <div class="test-item">
+                <span class="emoji">🔄</span>
+                <h3>旋转测试</h3>
+                <p>移动设备支持旋转</p>
+            </div>
+            <div class="test-item">
+                <span class="emoji">🖥️</span>
+                <h3>多设备兼容</h3>
+                <p>支持手机/平板/桌面</p>
+            </div>
+            <div class="test-item">
+                <span class="emoji">⚡</span>
+                <h3>性能监控</h3>
+                <p>实时页面性能指标</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2>🛠️ 调试信息</h2>
+        <div class="device-info">
+            <strong>加载时间:</strong> <span id="loadTime">计算中...</span><br>
+            <strong>当前时间:</strong> <span id="currentTime">获取中...</span><br>
+            <strong>页面模式:</strong> <span id="pageMode">检测中...</span>
+        </div>
+    </div>
+
+    <script>
+        // 更新页面信息
+        function updatePageInfo() {
+            document.getElementById('pageSize').textContent = 
+                `${window.innerWidth} × ${window.innerHeight}`;
+            document.getElementById('userAgent').textContent = 
+                navigator.userAgent.substring(0, 60) + '...';
+            document.getElementById('devicePixelRatio').textContent = 
+                window.devicePixelRatio || 1;
+            document.getElementById('currentTime').textContent = 
+                new Date().toLocaleString('zh-CN');
+                
+            // 检测页面模式
+            const width = window.innerWidth;
+            let mode = '';
+            if (width < 768) mode = '📱 手机模式';
+            else if (width < 1024) mode = '📟 平板模式';
+            else mode = '🖥️ 桌面模式';
+            document.getElementById('pageMode').textContent = mode;
+        }
+
+        // 页面加载完成
+        window.addEventListener('load', function() {
+            const loadTime = Date.now() - performance.timing.navigationStart;
+            document.getElementById('loadTime').textContent = `${loadTime}ms`;
+            updatePageInfo();
+        });
+
+        // 窗口大小改变时更新信息
+        window.addEventListener('resize', updatePageInfo);
+
+        // 每秒更新时间
+        setInterval(() => {
+            document.getElementById('currentTime').textContent = 
+                new Date().toLocaleString('zh-CN');
+        }, 1000);
+
+        // 初始更新
+        updatePageInfo();
+
+        console.log('🎮 设备模拟器测试页面已加载');
+        console.log('📊 当前页面尺寸:', window.innerWidth, '×', window.innerHeight);
+        console.log('🔧 使用 BrainBaseDebug 工具进行测试');
+    </script>
+</body>
+</html> 

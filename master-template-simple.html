@@ -357,13 +357,12 @@
         /* 设备控制按钮 - 只在模拟器激活时显示 */
         .device-controls {
             position: absolute;
-            top: 50%;
-            right: -60px;
-            transform: translateY(-50%);
+            top: 20px;
+            right: 20px;
             display: none;
-            flex-direction: column;
+            flex-direction: row;
             gap: 12px;
-            z-index: 1001;
+            z-index: 1002;
         }
         
         .page-simulator-container.active .device-controls {
@@ -463,9 +462,9 @@
         .device-control-btn::after {
             content: attr(data-tooltip);
             position: absolute;
-            bottom: -35px;
-            left: 50%;
-            transform: translateX(-50%);
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%);
             background: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 4px 8px;
@@ -476,13 +475,13 @@
             visibility: hidden;
             transition: all 0.3s ease;
             pointer-events: none;
-            z-index: 1002;
+            z-index: 1003;
         }
         
         .device-control-btn:hover::after {
             opacity: 1;
             visibility: visible;
-            transform: translateX(-50%) translateY(-2px);
+            right: 52px;
         }
         
         /* 设备模拟模式状态指示 */
@@ -770,9 +769,18 @@
         .notification-container {
             position: fixed;
             top: 20px;
-            right: 20px;
+            left: 20px;
             z-index: 10000;
             max-width: 400px;
+        }
+        
+        /* 模拟器模式下的通知样式 */
+        .page-simulator-container.active .notification-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10001;
+            max-width: 300px;
         }
         
         .notification {
@@ -783,7 +791,7 @@
             padding: 16px;
             display: flex;
             align-items: center;
-            transform: translateX(100%);
+            transform: translateX(-100%);
             opacity: 0;
             transition: all 0.3s ease;
             border-left: 4px solid #3498db;
@@ -795,7 +803,7 @@
         }
         
         .notification.notification-hiding {
-            transform: translateX(100%);
+            transform: translateX(-100%);
             opacity: 0;
         }
         
@@ -1848,6 +1856,201 @@
                 justify-content: center;
             }
         }
+        
+        /* 通知徽章样式 */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* 侧边栏图钉样式 - 美化版 */
+        .sidebar-pin {
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #8e9aa7 0%, #6c757d 50%, #5a636b 100%);
+            border-radius: 2px 8px 2px 2px;
+            transform: rotate(45deg);
+            box-shadow: 
+                0 1px 3px rgba(0, 0, 0, 0.2),
+                0 0 0 0.5px rgba(255, 255, 255, 0.1) inset,
+                0 1px 0 rgba(255, 255, 255, 0.2) inset;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+            border: 0.5px solid rgba(108, 117, 125, 0.3);
+        }
+        
+        .sidebar-pin::before {
+            content: '';
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 3px;
+            height: 3px;
+            background: radial-gradient(circle, #ffffff 0%, #f8f9fa  40%, #e9ecef 100%);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 0 0.5px rgba(108, 117, 125, 0.4),
+                0 1px 2px rgba(0, 0, 0, 0.1) inset;
+            border: 0.5px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .sidebar-pin.enabled {
+            opacity: 0.75;
+            visibility: visible;
+            transform: rotate(45deg) scale(1);
+        }
+        
+        .gitee-nav-item:hover .sidebar-pin.enabled {
+            transform: rotate(45deg) scale(1.15);
+            background: linear-gradient(135deg, #a8b3c0 0%, #495057 50%, #343a40 100%);
+            opacity: 0.9;
+            box-shadow: 
+                0 2px 6px rgba(0, 0, 0, 0.25),
+                0 0 0 0.5px rgba(255, 255, 255, 0.15) inset,
+                0 1px 0 rgba(255, 255, 255, 0.25) inset;
+        }
+        
+        /* 图钉固定状态样式 - 美化版 */
+        .sidebar-pin.pinned {
+            background: linear-gradient(135deg, #ff6b6b 0%, #dc3545 50%, #c82333 100%) !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            box-shadow: 
+                0 2px 8px rgba(220, 53, 69, 0.4),
+                0 0 0 0.5px rgba(255, 255, 255, 0.2) inset,
+                0 1px 0 rgba(255, 255, 255, 0.3) inset,
+                0 0 12px rgba(220, 53, 69, 0.3) !important;
+            animation: pinnedGlow 3s ease-in-out infinite;
+            border: 0.5px solid rgba(220, 53, 69, 0.6);
+        }
+        
+        .sidebar-pin.pinned::before {
+            background: radial-gradient(circle, #ffffff 0%, #ffe6e6 40%, #ffcccc 100%);
+            box-shadow: 
+                0 0 0 0.5px rgba(220, 53, 69, 0.6),
+                0 1px 2px rgba(0, 0, 0, 0.1) inset;
+            border: 0.5px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .gitee-nav-item:hover .sidebar-pin.pinned {
+            transform: rotate(45deg) scale(1.25) !important;
+            background: linear-gradient(135deg, #ff5252 0%, #c82333 50%, #bd2130 100%) !important;
+            box-shadow: 
+                0 3px 12px rgba(220, 53, 69, 0.6),
+                0 0 0 0.5px rgba(255, 255, 255, 0.25) inset,
+                0 1px 0 rgba(255, 255, 255, 0.35) inset,
+                0 0 16px rgba(220, 53, 69, 0.5) !important;
+            animation: pinnedIntense 1.5s ease-in-out infinite;
+        }
+        
+        /* 图钉固定状态发光动画 - 更柔和 */
+        @keyframes pinnedGlow {
+            0%, 100% {
+                opacity: 1;
+                filter: brightness(1);
+            }
+            50% {
+                opacity: 0.85;
+                filter: brightness(1.1);
+            }
+        }
+        
+        /* 图钉悬停时的强烈动画 */
+        @keyframes pinnedIntense {
+            0%, 100% {
+                filter: brightness(1) saturate(1);
+            }
+            50% {
+                filter: brightness(1.15) saturate(1.1);
+            }
+        }
+        
+        /* 图钉点击效果 - 增强版 */
+        .sidebar-pin:hover {
+            cursor: pointer;
+            transform: rotate(45deg) scale(1.15);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .sidebar-pin:active {
+            transform: rotate(45deg) scale(0.85);
+            transition: all 0.1s ease;
+        }
+        
+        /* 图钉点击时的涟漪效果 */
+        .sidebar-pin-ripple {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(220, 53, 69, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            animation: pinRipple 0.6s ease-out;
+            pointer-events: none;
+            z-index: 9;
+        }
+        
+        @keyframes pinRipple {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            100% {
+                width: 24px;
+                height: 24px;
+                opacity: 0;
+            }
+        }
+        
+        /* 图钉在不同设备模式下的适配 - 美化版 */
+        .device-mode-mobile .sidebar-pin {
+            bottom: 1px;
+            right: 1px;
+            width: 6px;
+            height: 6px;
+            border-radius: 1px 6px 1px 1px;
+        }
+        
+        .device-mode-mobile .sidebar-pin::before {
+            width: 2px;
+            height: 2px;
+            top: 0.5px;
+            left: 0.5px;
+        }
+        
+        .device-mode-tablet .sidebar-pin {
+            bottom: 2px;
+            right: 2px;
+            width: 7px;
+            height: 7px;
+            border-radius: 1.5px 7px 1.5px 1.5px;
+        }
+        
+        .device-mode-tablet .sidebar-pin::before {
+            width: 2.5px;
+            height: 2.5px;
+            top: 0.5px;
+            left: 0.5px;
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -2133,6 +2336,7 @@
                      <i class="fas fa-home"></i>
                      <span class="nav-text">仪表盘</span>
                      <span class="nav-text-full">仪表盘</span>
+                     <div class="sidebar-pin" data-pin="dashboard"></div>
                  </a>
                  
                  <!-- 用户管理 -->
@@ -2140,6 +2344,7 @@
                      <i class="fas fa-users"></i>
                      <span class="nav-text">用户</span>
                      <span class="nav-text-full">用户管理</span>
+                     <div class="sidebar-pin" data-pin="user-management"></div>
                  </a>
                  
                  <!-- 角色管理 -->
@@ -2147,6 +2352,7 @@
                      <i class="fas fa-user-tag"></i>
                      <span class="nav-text">角色</span>
                      <span class="nav-text-full">角色管理</span>
+                     <div class="sidebar-pin" data-pin="role-management"></div>
                  </a>
                  
                  <!-- 权限配置 -->
@@ -2154,6 +2360,7 @@
                      <i class="fas fa-shield-alt"></i>
                      <span class="nav-text">权限</span>
                      <span class="nav-text-full">权限配置</span>
+                     <div class="sidebar-pin" data-pin="permission-config"></div>
                  </a>
                  
                  <!-- 菜单管理 -->
@@ -2161,6 +2368,7 @@
                      <i class="fas fa-list"></i>
                      <span class="nav-text">菜单</span>
                      <span class="nav-text-full">菜单管理</span>
+                     <div class="sidebar-pin" data-pin="menu-management"></div>
                  </a>
                  
                  <!-- 部门管理 -->
@@ -2168,6 +2376,7 @@
                      <i class="fas fa-sitemap"></i>
                      <span class="nav-text">部门</span>
                      <span class="nav-text-full">部门管理</span>
+                     <div class="sidebar-pin" data-pin="department-management"></div>
                  </a>
                  
                  <!-- 操作日志 -->
@@ -2175,6 +2384,7 @@
                      <i class="fas fa-file-alt"></i>
                      <span class="nav-text">日志</span>
                      <span class="nav-text-full">操作日志</span>
+                     <div class="sidebar-pin" data-pin="operation-log"></div>
                  </a>
                  
                  <!-- 统计报表 -->
@@ -2182,6 +2392,7 @@
                      <i class="fas fa-chart-bar"></i>
                      <span class="nav-text">统计</span>
                      <span class="nav-text-full">统计报表</span>
+                     <div class="sidebar-pin" data-pin="statistics"></div>
                  </a>
                  
                  <!-- 系统设置 -->
@@ -2189,6 +2400,7 @@
                      <i class="fas fa-cog"></i>
                      <span class="nav-text">设置</span>
                      <span class="nav-text-full">系统设置</span>
+                     <div class="sidebar-pin" data-pin="system-settings"></div>
                  </a>
                  
                  <!-- 个人中心 -->
@@ -2196,6 +2408,7 @@
                      <i class="fas fa-user"></i>
                      <span class="nav-text">个人</span>
                      <span class="nav-text-full">个人中心</span>
+                     <div class="sidebar-pin" data-pin="user-profile"></div>
                  </a>
             </div>
         </aside>
@@ -2225,6 +2438,141 @@
         
         <div class="device-frame" id="deviceFrame">
             <iframe class="device-screen" id="deviceScreen" src=""></iframe>
+        </div>
+    </div>
+
+    <!-- 菜单管理模态框 -->
+    <div class="menu-management-modal" id="menuManagementModal">
+        <div class="menu-management-overlay" id="menuManagementOverlay"></div>
+        <div class="menu-management-content">
+            <div class="menu-management-header">
+                <h3>
+                    <i class="fas fa-cogs"></i>
+                    菜单设置管理
+                </h3>
+                <button class="menu-management-close" id="menuManagementClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="menu-management-body">
+                <!-- 图钉显示设置 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-thumbtack" style="color: #dc3545;"></i>
+                        侧边栏图钉显示
+                    </h4>
+                    <p class="menu-management-desc">
+                        控制侧边栏导航按钮右下角的小图钉是否显示。图钉可以作为视觉标识，帮助用户快速识别重要功能。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-outline" id="enablePinsBtn">
+                            <i class="fas fa-eye"></i>
+                            启用图钉显示
+                        </button>
+                        <button class="btn btn-outline" id="disablePinsBtn">
+                            <i class="fas fa-eye-slash"></i>
+                            禁用图钉显示
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 图钉点击固定功能 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-map-pin" style="color: #dc3545;"></i>
+                        图钉点击固定功能
+                    </h4>
+                    <p class="menu-management-desc">
+                        启用后，点击侧边栏图钉可以将该功能固定显示，不受五角星收藏状态影响。被固定的功能会持续显示在侧边栏中，直到再次点击图钉取消固定。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-outline" id="enablePinClickBtn">
+                            <i class="fas fa-mouse-pointer"></i>
+                            启用图钉点击
+                        </button>
+                        <button class="btn btn-outline" id="disablePinClickBtn">
+                            <i class="fas fa-ban"></i>
+                            禁用图钉点击
+                        </button>
+                        <button class="btn btn-outline" id="showPinnedItemsBtn">
+                            <i class="fas fa-list-check"></i>
+                            查看固定项目
+                        </button>
+                        <button class="btn btn-outline" id="resetPinnedBtn">
+                            <i class="fas fa-undo"></i>
+                            清除所有固定
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 收藏管理 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-star" style="color: #fbbf24;"></i>
+                        收藏管理
+                    </h4>
+                    <p class="menu-management-desc">
+                        管理侧边栏显示的收藏功能。只有收藏的功能会显示在左侧导航栏中。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-outline" id="resetStarsBtn">
+                            <i class="fas fa-undo"></i>
+                            重置收藏
+                        </button>
+                        <button class="btn btn-outline" id="showStarredBtn">
+                            <i class="fas fa-list"></i>
+                            查看收藏列表
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 菜单样式 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-palette" style="color: #8b5cf6;"></i>
+                        菜单样式
+                    </h4>
+                    <p class="menu-management-desc">
+                        调整下拉菜单的显示样式和主题设置。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-outline" id="compactModeBtn">
+                            <i class="fas fa-compress"></i>
+                            紧凑模式
+                        </button>
+                        <button class="btn btn-outline" id="normalModeBtn">
+                            <i class="fas fa-expand"></i>
+                            正常模式
+                        </button>
+                        <button class="btn btn-outline" id="darkThemeBtn">
+                            <i class="fas fa-moon"></i>
+                            深色主题
+                        </button>
+                        <button class="btn btn-outline" id="lightThemeBtn">
+                            <i class="fas fa-sun"></i>
+                            浅色主题
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 危险操作 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i>
+                        重置设置
+                    </h4>
+                    <p class="menu-management-desc">
+                        恢复所有菜单设置到默认状态。此操作不可撤销。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-danger" id="resetAllBtn">
+                            <i class="fas fa-trash-restore"></i>
+                            恢复默认设置
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2329,140 +2677,306 @@
                 const config = deviceConfigs[deviceId];
                 if (!config) return;
 
-                this.currentDevice = deviceId;
-                this.closeDropdown();
-                this.openSimulator(config);
-                this.updateButtonIcon(config.type);
+                // 检查是否切换到相同设备
+                if (this.currentDevice === deviceId && this.isOpen) {
+                    console.log(`📱 已选择设备: ${config.name}，无需切换`);
+                    this.closeDropdown();
+                    return;
+                }
+
+                const wasOpen = this.isOpen;
+                const previousDevice = this.currentDevice;
                 
-                console.log(`📱 选择设备: ${config.name} (${config.width}×${config.height})`);
+                this.closeDropdown();
+                
+                if (wasOpen) {
+                    // 在模拟器模式下切换设备：先退出再重新进入
+                    console.log(`🔄 模拟器模式下切换设备: ${deviceConfigs[previousDevice]?.name || '未知'} → ${config.name}`);
+                    console.log('📤 正在退出当前模拟器...');
+                    
+                    // 先关闭当前模拟器
+                    this.closeSimulator();
+                    
+                    // 延迟重新打开新设备模拟器，确保完全清理
+                    setTimeout(() => {
+                        console.log(`📥 重新启动模拟器: ${config.name}`);
+                        this.currentDevice = deviceId;
+                        this.openSimulator(config);
+                        this.updateButtonIcon(config.type);
+                        
+                        // 显示切换完成通知
+                        if (window.BrainBase && window.BrainBase.notify) {
+                            BrainBase.notify.show(`设备切换完成 - ${config.name}`, 'success', 2500);
+                        }
+                    }, 300);
+                } else {
+                    // 首次启动模拟器
+                    console.log(`📱 首次启动设备模拟器: ${config.name} (${config.width}×${config.height})`);
+                    this.isRotated = false; // 首次启动重置旋转状态
+                    this.currentDevice = deviceId;
+                    this.openSimulator(config);
+                    this.updateButtonIcon(config.type);
+                    
+                    // 显示启动通知
+                    if (window.BrainBase && window.BrainBase.notify) {
+                        BrainBase.notify.show(`设备模拟器已启动 - ${config.name}`, 'success', 2000);
+                    }
+                }
             }
 
             updateButtonIcon(deviceType) {
                 const icon = document.getElementById('deviceIcon');
                 if (icon) {
-                    const iconMap = {
-                        'mobile': 'fas fa-mobile-alt',
-                        'tablet': 'fas fa-tablet-alt',
-                        'desktop': 'fas fa-desktop'
-                    };
-                    icon.className = iconMap[deviceType] || 'fas fa-mobile-alt';
+                    // 添加缩放动画效果
+                    icon.style.transform = 'scale(0.8)';
+                    icon.style.transition = 'all 0.2s ease';
+                    
+                    setTimeout(() => {
+                        const iconMap = {
+                            'mobile': 'fas fa-mobile-alt',
+                            'tablet': 'fas fa-tablet-alt',
+                            'desktop': 'fas fa-desktop'
+                        };
+                        
+                        // 更新图标类名
+                        icon.className = iconMap[deviceType] || 'fas fa-mobile-alt';
+                        
+                        // 恢复原始大小
+                        icon.style.transform = 'scale(1)';
+                        
+                        // 添加颜色变化效果，根据设备类型显示不同颜色
+                        const colorMap = {
+                            'mobile': '#007bff',   // 蓝色 - 手机
+                            'tablet': '#28a745',   // 绿色 - 平板  
+                            'desktop': '#6c757d'   // 灰色 - 桌面
+                        };
+                        
+                        icon.style.color = colorMap[deviceType] || '#007bff';
+                        
+                        // 0.5秒后恢复默认颜色
+                        setTimeout(() => {
+                            icon.style.color = '';
+                        }, 500);
+                        
+                    }, 100);
+                    
+                    console.log(`🎯 模拟器按钮图标已更新: ${deviceType}`);
                 }
             }
 
             openSimulator(config) {
-                const container = document.getElementById('pageSimulatorContainer');
-                const frame = document.getElementById('deviceFrame');
-                const screen = document.getElementById('deviceScreen');
-                const info = document.getElementById('deviceInfo');
-                const rotateBtn = document.getElementById('rotateDevice');
-
-                if (container && frame && screen && info) {
-                    console.log(`🚀 正在启动设备模拟器: ${config.name}`);
-                    
-                    // 设置设备框架大小
-                    this.setFrameSize(frame, config);
-                    
-                    // 根据设备类型显示或隐藏旋转按钮
-                    if (rotateBtn) {
-                        if (config.type === 'desktop') {
-                            rotateBtn.style.display = 'none';
-                            console.log('🖥️ 桌面设备 - 隐藏旋转按钮');
-                        } else {
-                            rotateBtn.style.display = 'flex';
-                            console.log('📱 移动设备 - 显示旋转按钮');
-                        }
-                    }
-                    
-                    // 更新设备信息
-                    const deviceTypeText = {
-                        'mobile': '📱',
-                        'tablet': '📟', 
-                        'desktop': '🖥️'
-                    };
-                    const typeIcon = deviceTypeText[config.type] || '📱';
-                    info.textContent = `${typeIcon} ${config.name} - ${config.width}×${config.height}`;
-                    
-                    // 显示模拟器
-                    container.classList.add('active');
-                    this.isOpen = true;
-                    this.isRotated = false;
-                    
-                    // 延迟加载iframe内容，确保容器已显示
-                    setTimeout(() => {
-                        console.log('📄 加载iframe内容...');
-                        screen.style.opacity = '0';
-                        screen.src = window.location.href;
-                        
-                        // iframe加载完成事件
-                        screen.onload = () => {
-                            console.log('✅ iframe加载完成');
-                            screen.style.transition = 'opacity 0.3s ease';
-                            screen.style.opacity = '1';
-                        };
-                        
-                        // iframe加载错误处理
-                        screen.onerror = () => {
-                            console.error('❌ iframe加载失败');
-                            screen.style.opacity = '1';
-                        };
-                        
-                        // 超时处理
-                        setTimeout(() => {
-                            if (screen.style.opacity === '0') {
-                                console.warn('⚠️ iframe加载超时，强制显示');
-                                screen.style.opacity = '1';
-                            }
-                        }, 5000);
-                    }, 100);
-
-                    // 显示通知
-                    if (window.BrainBase && window.BrainBase.notify) {
-                        BrainBase.notify.show(`设备模拟器已开启 - ${config.name}`, 'success', 3000);
-                    }
-                    
-                    console.log(`✅ 设备模拟器启动完成: ${config.name} (${config.width}×${config.height})`);
-                } else {
-                    console.error('❌ 设备模拟器启动失败: 缺少必要的DOM元素');
-                }
-            }
-
-            setFrameSize(frame, config) {
-                let { width, height } = config;
+                console.log(`🚀 启动设备模拟器: ${config.name}`);
                 
+                // 获取实际尺寸（考虑旋转）
+                let { width, height } = config;
                 if (this.isRotated && config.type !== 'desktop') {
                     [width, height] = [height, width];
                 }
-
-                // 清除所有之前的内联样式，避免样式冲突
-                frame.style.width = '';
-                frame.style.height = '';
-                frame.style.maxWidth = '';
-                frame.style.maxHeight = '';
-                frame.style.minWidth = '';
-                frame.style.minHeight = '';
-
-                // 根据设备类型设置框架样式
-                frame.className = `device-frame ${config.type}`;
                 
-                if (config.type !== 'desktop') {
-                    // 手机和平板设备使用精确像素值
-                    frame.style.width = width + 'px';
-                    frame.style.height = height + 'px';
-                    console.log(`📱 设置${config.type}设备尺寸: ${width}×${height}px`);
+                // 简单的设备模拟：直接调整body样式
+                document.body.style.transition = 'all 0.3s ease';
+                
+                if (config.type === 'mobile') {
+                    // 手机模式：简单的固定宽度，居中显示
+                    document.body.style.width = width + 'px';
+                    document.body.style.height = height + 'px';
+                    document.body.style.margin = '20px auto';
+                    document.body.style.border = '8px solid #000';
+                    document.body.style.borderRadius = '25px';
+                    document.body.style.background = '#fff';
+                    document.body.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+                    document.body.style.overflow = 'hidden';
+                    // 添加移动端类名以应用相应样式
+                    document.body.classList.add('device-mode-mobile');
+                } else if (config.type === 'tablet') {
+                    // 平板模式：中等尺寸
+                    document.body.style.width = width + 'px';
+                    document.body.style.height = height + 'px';
+                    document.body.style.margin = '20px auto';
+                    document.body.style.border = '12px solid #333';
+                    document.body.style.borderRadius = '15px';
+                    document.body.style.background = '#fff';
+                    document.body.style.boxShadow = '0 8px 25px rgba(0,0,0,0.25)';
+                    document.body.style.overflow = 'hidden';
+                    // 添加平板类名
+                    document.body.classList.add('device-mode-tablet');
                 } else {
-                    // 桌面设备使用响应式尺寸
-                    frame.style.width = '90%';
-                    frame.style.height = '90%';
-                    frame.style.maxWidth = width + 'px';
-                    frame.style.maxHeight = height + 'px';
-                    console.log(`🖥️ 设置桌面设备尺寸: 90% (最大${width}×${height}px)`);
+                    // 桌面模式：恢复正常显示
+                    document.body.style.width = '';
+                    document.body.style.height = '';
+                    document.body.style.margin = '';
+                    document.body.style.border = '';
+                    document.body.style.borderRadius = '';
+                    document.body.style.background = '';
+                    document.body.style.boxShadow = '';
+                    document.body.style.overflow = '';
+                    document.body.style.fontSize = '';
+                }
+
+                // 根据设备类型显示或隐藏旋转按钮
+                const rotateBtn = document.getElementById('rotateDevice');
+                if (rotateBtn) {
+                    rotateBtn.style.display = config.type === 'desktop' ? 'none' : 'flex';
                 }
                 
-                // 确保框架可见
-                frame.style.display = 'block';
-                frame.style.visibility = 'visible';
+                // 更新设备信息显示
+                this.showDeviceInfo(config);
                 
-                console.log(`📐 设备框架尺寸设置完成: ${config.name} - ${width}×${height} (${config.type})`);
+                // 显示控制按钮
+                this.showControls();
+                
+                this.isOpen = true;
+                
+                console.log(`✅ 设备模拟器启动完成: ${config.name} (${width}×${height})`);
+            }
+
+            createDeviceContainer() {
+                // 创建设备背景容器
+                let container = document.getElementById('device-background-container');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.id = 'device-background-container';
+                    container.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        z-index: -1;
+                        transition: all 0.3s ease;
+                    `;
+                    document.body.appendChild(container);
+                }
+            }
+
+            removeDeviceContainer() {
+                const container = document.getElementById('device-background-container');
+                if (container) {
+                    container.remove();
+                }
+            }
+
+            showDeviceInfo(config) {
+                // 创建或更新设备信息显示
+                let infoDiv = document.getElementById('device-simulator-info');
+                if (!infoDiv) {
+                    infoDiv = document.createElement('div');
+                    infoDiv.id = 'device-simulator-info';
+                    infoDiv.style.cssText = `
+                        position: fixed;
+                        top: 10px;
+                        left: 10px;
+                        background: rgba(0, 0, 0, 0.8);
+                        color: white;
+                        padding: 8px 16px;
+                        border-radius: 8px;
+                        font-size: 12px;
+                        z-index: 10000;
+                        backdrop-filter: blur(8px);
+                    `;
+                    document.body.appendChild(infoDiv);
+                }
+                
+                const typeIcon = {
+                    'mobile': '📱',
+                    'tablet': '📟', 
+                    'desktop': '🖥️'
+                }[config.type] || '📱';
+                
+                infoDiv.textContent = `${typeIcon} ${config.name} - ${config.width}×${config.height}`;
+            }
+
+            showControls() {
+                // 创建或显示控制按钮
+                let controlsDiv = document.getElementById('device-simulator-controls');
+                if (!controlsDiv) {
+                    controlsDiv = document.createElement('div');
+                    controlsDiv.id = 'device-simulator-controls';
+                    controlsDiv.style.cssText = `
+                        position: fixed;
+                        top: 10px;
+                        right: 10px;
+                        display: flex;
+                        gap: 8px;
+                        z-index: 10000;
+                    `;
+                    
+                    // 旋转按钮
+                    const rotateBtn = document.createElement('button');
+                    rotateBtn.id = 'rotateDevice';
+                    rotateBtn.innerHTML = '<i class="fas fa-redo"></i>';
+                    rotateBtn.style.cssText = `
+                        width: 40px;
+                        height: 40px;
+                        border: none;
+                        border-radius: 8px;
+                        background: rgba(255, 255, 255, 0.9);
+                        color: #495057;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 14px;
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                    `;
+                    rotateBtn.addEventListener('click', () => this.rotateDevice());
+                    
+                    // 关闭按钮
+                    const closeBtn = document.createElement('button');
+                    closeBtn.id = 'closeSimulator';
+                    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    closeBtn.style.cssText = rotateBtn.style.cssText;
+                    closeBtn.addEventListener('click', () => this.closeSimulator());
+                    
+                    controlsDiv.appendChild(rotateBtn);
+                    controlsDiv.appendChild(closeBtn);
+                    document.body.appendChild(controlsDiv);
+                }
+                
+                controlsDiv.style.display = 'flex';
+            }
+
+            closeSimulator() {
+                console.log('🔄 正在关闭设备模拟器...');
+                
+                // 移除所有设备模式的类名
+                document.body.classList.remove('device-mode-mobile', 'device-mode-tablet', 'device-mode-pc');
+                
+                // 重置body样式
+                document.body.style.transition = '';
+                document.body.style.width = '';
+                document.body.style.height = '';
+                document.body.style.margin = '';
+                document.body.style.border = '';
+                document.body.style.borderRadius = '';
+                document.body.style.background = '';
+                document.body.style.boxShadow = '';
+                document.body.style.overflow = '';
+                
+                // 移除信息显示和控制按钮
+                const infoDiv = document.getElementById('device-simulator-info');
+                const controlsDiv = document.getElementById('device-simulator-controls');
+                if (infoDiv) infoDiv.remove();
+                if (controlsDiv) controlsDiv.remove();
+                
+                // 重置按钮图标为默认状态
+                const icon = document.getElementById('deviceIcon');
+                if (icon) {
+                    icon.className = 'fas fa-mobile-alt'; // 默认显示移动设备图标
+                }
+                
+                // 重置状态
+                this.isOpen = false;
+                this.isRotated = false;
+                this.currentDevice = null;
+                
+                console.log('✅ 设备模拟器已关闭');
+            }
+
+            // 获取当前选择的设备
+            getCurrentDevice() {
+                return this.currentDevice ? deviceConfigs[this.currentDevice] : null;
             }
 
             rotateDevice() {
@@ -2472,43 +2986,28 @@
                 if (config.type === 'desktop') return; // 桌面设备不支持旋转
 
                 this.isRotated = !this.isRotated;
-                const frame = document.getElementById('deviceFrame');
-                const info = document.getElementById('deviceInfo');
+                console.log(`🔄 设备旋转: ${config.name} - ${this.isRotated ? '横屏' : '竖屏'}`);
                 
-                if (frame && info) {
-                    this.setFrameSize(frame, config);
-                    
-                    let { width, height } = config;
-                    if (this.isRotated) {
-                        [width, height] = [height, width];
-                    }
-                    
-                    const deviceTypeText = {
+                // 重新应用设备模拟样式
+                this.openSimulator(config);
+                
+                // 更新设备信息显示
+                let { width, height } = config;
+                if (this.isRotated) {
+                    [width, height] = [height, width];
+                }
+                
+                const infoDiv = document.getElementById('device-simulator-info');
+                if (infoDiv) {
+                    const typeIcon = {
                         'mobile': '📱',
                         'tablet': '📟', 
                         'desktop': '🖥️'
-                    };
-                    const typeIcon = deviceTypeText[config.type] || '📱';
-                    const orientationText = this.isRotated ? '(横屏)' : '(竖屏)';
-                    info.textContent = `${typeIcon} ${config.name} - ${width}×${height} ${orientationText}`;
+                    }[config.type] || '📱';
                     
-                    console.log(`🔄 设备已旋转: ${config.name} - ${width}×${height}`);
+                    const orientationText = this.isRotated ? '(横屏)' : '(竖屏)';
+                    infoDiv.textContent = `${typeIcon} ${config.name} - ${width}×${height} ${orientationText}`;
                 }
-            }
-
-            closeSimulator() {
-                const container = document.getElementById('pageSimulatorContainer');
-                if (container) {
-                    container.classList.remove('active');
-                    this.isOpen = false;
-                    this.isRotated = false;
-                    console.log('❌ 设备模拟器已关闭');
-                }
-            }
-
-            // 获取当前选择的设备
-            getCurrentDevice() {
-                return this.currentDevice ? deviceConfigs[this.currentDevice] : null;
             }
         }
 
@@ -2541,7 +3040,9 @@
             init() {
                 this.initStarStates();
                 this.bindStarEventsOnce();
+                console.log('📋 五角星管理器开始更新侧边栏，当前收藏项目:', this.starredItems);
                 this.updateSidebar();
+                console.log('📋 五角星管理器初始化完成');
             }
             
             initStarStates() {
@@ -2609,27 +3110,33 @@
             }
             
             updateSidebar() {
-                const sidebarItems = document.querySelectorAll('.gitee-nav-item[data-menu-id]');
-                
-                sidebarItems.forEach(item => {
-                    const menuId = item.getAttribute('data-menu-id');
+                // 如果图钉固定管理器存在且已初始化，使用联合显示逻辑
+                if (window.pinFixManager && window.pinFixManager.updateSidebarWithPinnedItems) {
+                    window.pinFixManager.updateSidebarWithPinnedItems();
+                } else {
+                    // 原有的单独五角星逻辑（作为后备）
+                    const sidebarItems = document.querySelectorAll('.gitee-nav-item[data-menu-id]');
                     
-                    if (this.starredItems.includes(menuId)) {
-                        item.style.display = 'flex';
-                        item.style.opacity = '1';
-                        item.style.transform = 'scale(1)';
-                    } else {
-                        item.style.opacity = '0';
-                        item.style.transform = 'scale(0.8)';
-                        setTimeout(() => {
-                            if (!this.starredItems.includes(menuId)) {
-                                item.style.display = 'none';
-                            }
-                        }, 300);
-                    }
-                });
-                
-                this.showEmptyStateIfNeeded();
+                    sidebarItems.forEach(item => {
+                        const menuId = item.getAttribute('data-menu-id');
+                        
+                        if (this.starredItems.includes(menuId)) {
+                            item.style.display = 'flex';
+                            item.style.opacity = '1';
+                            item.style.transform = 'scale(1)';
+                        } else {
+                            item.style.opacity = '0';
+                            item.style.transform = 'scale(0.8)';
+                            setTimeout(() => {
+                                if (!this.starredItems.includes(menuId)) {
+                                    item.style.display = 'none';
+                                }
+                            }, 300);
+                        }
+                    });
+                    
+                    this.showEmptyStateIfNeeded();
+                }
             }
             
             showEmptyStateIfNeeded() {
@@ -2662,6 +3169,656 @@
                 this.saveStarredItems();
                 this.initStarStates();
                 this.updateSidebar();
+            }
+        }
+
+        // 图钉管理类
+        class PinManager {
+            constructor() {
+                this.pinsEnabled = this.loadPinSetting();
+                this.init();
+            }
+            
+            loadPinSetting() {
+                try {
+                    const saved = localStorage.getItem('brainbase-pins-enabled');
+                    return saved ? JSON.parse(saved) : true; // 默认启用
+                } catch (e) {
+                    console.error('加载图钉设置失败:', e);
+                    return true; // 默认启用
+                }
+            }
+            
+            savePinSetting() {
+                try {
+                    localStorage.setItem('brainbase-pins-enabled', JSON.stringify(this.pinsEnabled));
+                } catch (e) {
+                    console.error('保存图钉设置失败:', e);
+                }
+            }
+            
+            init() {
+                this.updatePinDisplay();
+                console.log(`📌 图钉管理器已初始化 - 状态: ${this.pinsEnabled ? '启用' : '禁用'}`);
+            }
+            
+            enablePins() {
+                this.pinsEnabled = true;
+                this.savePinSetting();
+                this.updatePinDisplay();
+                
+                // 显示成功通知
+                if (window.BrainBase && window.BrainBase.notify) {
+                    BrainBase.notify.show('图钉显示已启用 📌', 'success', 2000);
+                }
+                
+                console.log('📌 侧边栏图钉显示已启用');
+            }
+            
+            disablePins() {
+                this.pinsEnabled = false;
+                this.savePinSetting();
+                this.updatePinDisplay();
+                
+                // 显示成功通知
+                if (window.BrainBase && window.BrainBase.notify) {
+                    BrainBase.notify.show('图钉显示已禁用', 'info', 2000);
+                }
+                
+                console.log('📌 侧边栏图钉显示已禁用');
+            }
+            
+            updatePinDisplay() {
+                const pins = document.querySelectorAll('.sidebar-pin');
+                pins.forEach(pin => {
+                    if (this.pinsEnabled) {
+                        pin.classList.add('enabled');
+                    } else {
+                        pin.classList.remove('enabled');
+                    }
+                });
+            }
+            
+            togglePins() {
+                if (this.pinsEnabled) {
+                    this.disablePins();
+                } else {
+                    this.enablePins();
+                }
+            }
+            
+            isPinsEnabled() {
+                return this.pinsEnabled;
+            }
+        }
+
+        // 图钉固定功能管理类
+        class PinFixManager {
+            constructor() {
+                this.pinnedItems = this.loadPinnedItems();
+                this.pinClickEnabled = this.loadPinClickSetting();
+                this.init();
+            }
+            
+            loadPinnedItems() {
+                try {
+                    const saved = localStorage.getItem('brainbase-pinned-items');
+                    return saved ? JSON.parse(saved) : [];
+                } catch (e) {
+                    console.error('加载固定项目失败:', e);
+                    return [];
+                }
+            }
+            
+            savePinnedItems() {
+                try {
+                    localStorage.setItem('brainbase-pinned-items', JSON.stringify(this.pinnedItems));
+                } catch (e) {
+                    console.error('保存固定项目失败:', e);
+                }
+            }
+            
+            loadPinClickSetting() {
+                try {
+                    const saved = localStorage.getItem('brainbase-pin-click-enabled');
+                    return saved ? JSON.parse(saved) : true; // 默认启用
+                } catch (e) {
+                    return true;
+                }
+            }
+            
+            savePinClickSetting() {
+                try {
+                    localStorage.setItem('brainbase-pin-click-enabled', JSON.stringify(this.pinClickEnabled));
+                } catch (e) {
+                    console.error('保存图钉点击设置失败:', e);
+                }
+            }
+            
+            init() {
+                this.bindPinClickEvents();
+                this.updatePinStates();
+                console.log(`📌 图钉固定功能已初始化 - 点击功能: ${this.pinClickEnabled ? '启用' : '禁用'}, 固定项目: ${this.pinnedItems.length}个`);
+            }
+            
+            bindPinClickEvents() {
+                // 为所有图钉添加点击事件
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('sidebar-pin')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        if (!this.pinClickEnabled) {
+                            console.log('📌 图钉点击功能已禁用');
+                            return;
+                        }
+                        
+                        const pinElement = e.target;
+                        const menuId = pinElement.getAttribute('data-pin');
+                        
+                        if (menuId) {
+                            this.togglePinFixed(menuId, pinElement);
+                        }
+                    }
+                });
+            }
+            
+            togglePinFixed(menuId, pinElement) {
+                const isPinned = this.pinnedItems.includes(menuId);
+                
+                // 创建涟漪效果
+                this.createRippleEffect(pinElement);
+                
+                if (isPinned) {
+                    // 取消固定
+                    this.pinnedItems = this.pinnedItems.filter(id => id !== menuId);
+                    pinElement.classList.remove('pinned');
+                    console.log(`📌 取消固定: ${menuId}`);
+                    
+                    if (window.BrainBase && window.BrainBase.notify) {
+                        BrainBase.notify.show('已取消固定 📌', 'info', 2000);
+                    }
+                } else {
+                    // 添加固定
+                    this.pinnedItems.push(menuId);
+                    pinElement.classList.add('pinned');
+                    console.log(`📌 固定项目: ${menuId}`);
+                    
+                    if (window.BrainBase && window.BrainBase.notify) {
+                        BrainBase.notify.show('已固定到侧边栏 📌', 'success', 2000);
+                    }
+                }
+                
+                this.savePinnedItems();
+                this.updateSidebarDisplay();
+                
+                // 添加点击动画效果
+                pinElement.style.transform = 'rotate(45deg) scale(1.3)';
+                setTimeout(() => {
+                    pinElement.style.transform = '';
+                }, 200);
+            }
+            
+            createRippleEffect(pinElement) {
+                const ripple = document.createElement('div');
+                ripple.className = 'sidebar-pin-ripple';
+                
+                const navItem = pinElement.closest('.gitee-nav-item');
+                if (navItem) {
+                    navItem.appendChild(ripple);
+                    
+                    // 清除涟漪效果
+                    setTimeout(() => {
+                        if (ripple.parentElement) {
+                            ripple.parentElement.removeChild(ripple);
+                        }
+                    }, 600);
+                }
+            }
+            
+            updatePinStates() {
+                const pins = document.querySelectorAll('.sidebar-pin');
+                pins.forEach(pin => {
+                    const menuId = pin.getAttribute('data-pin');
+                    if (this.pinnedItems.includes(menuId)) {
+                        pin.classList.add('pinned');
+                    } else {
+                        pin.classList.remove('pinned');
+                    }
+                });
+            }
+            
+            updateSidebarDisplay() {
+                if (window.menuStarManager) {
+                    // 重新更新侧边栏显示，考虑固定项目
+                    this.updateSidebarWithPinnedItems();
+                }
+            }
+            
+            updateSidebarWithPinnedItems() {
+                const sidebarItems = document.querySelectorAll('.gitee-nav-item[data-menu-id]');
+                
+                sidebarItems.forEach(item => {
+                    const menuId = item.getAttribute('data-menu-id');
+                    const isStarred = window.menuStarManager && window.menuStarManager.starredItems 
+                        ? window.menuStarManager.starredItems.includes(menuId) 
+                        : (menuId === 'dashboard'); // 默认显示仪表盘
+                    const isPinned = this.pinnedItems.includes(menuId);
+                    
+                    // 如果被固定或者被收藏，就显示
+                    if (isPinned || isStarred) {
+                        item.style.display = 'flex';
+                        item.style.opacity = '1';
+                        item.style.transform = 'scale(1)';
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            if (!this.pinnedItems.includes(menuId) && 
+                                !(window.menuStarManager && window.menuStarManager.starredItems && window.menuStarManager.starredItems.includes(menuId))) {
+                                item.style.display = 'none';
+                            }
+                        }, 300);
+                    }
+                });
+                
+                this.showEmptyStateIfNeeded();
+            }
+            
+            showEmptyStateIfNeeded() {
+                const sidebar = document.querySelector('.gitee-sidebar .py-4');
+                let emptyState = sidebar.querySelector('.sidebar-empty-state');
+                
+                // 去重计算实际显示的项目数
+                const allVisibleItems = new Set([
+                    ...this.pinnedItems,
+                    ...(window.menuStarManager ? window.menuStarManager.starredItems : [])
+                ]);
+                
+                if (allVisibleItems.size === 0) {
+                    if (!emptyState) {
+                        emptyState = document.createElement('div');
+                        emptyState.className = 'sidebar-empty-state';
+                        emptyState.innerHTML = `
+                            <div style="text-align: center; padding: 20px 10px; color: #9ca3af; font-size: 12px;">
+                                <i class="fas fa-star" style="font-size: 24px; margin-bottom: 8px; opacity: 0.3;"></i>
+                                <div>点击总菜单中的五角星</div>
+                                <div>或点击图钉来固定功能</div>
+                            </div>
+                        `;
+                        sidebar.appendChild(emptyState);
+                    }
+                    emptyState.style.display = 'block';
+                } else {
+                    if (emptyState) {
+                        emptyState.style.display = 'none';
+                    }
+                }
+            }
+            
+            enablePinClick() {
+                this.pinClickEnabled = true;
+                this.savePinClickSetting();
+                console.log('📌 图钉点击功能已启用');
+                
+                if (window.BrainBase && window.BrainBase.notify) {
+                    BrainBase.notify.show('图钉点击功能已启用 📌', 'success', 2000);
+                }
+            }
+            
+            disablePinClick() {
+                this.pinClickEnabled = false;
+                this.savePinClickSetting();
+                console.log('📌 图钉点击功能已禁用');
+                
+                if (window.BrainBase && window.BrainBase.notify) {
+                    BrainBase.notify.show('图钉点击功能已禁用', 'info', 2000);
+                }
+            }
+            
+            isPinClickEnabled() {
+                return this.pinClickEnabled;
+            }
+            
+            resetPinnedItems() {
+                this.pinnedItems = [];
+                this.savePinnedItems();
+                this.updatePinStates();
+                this.updateSidebarDisplay();
+                console.log('📌 所有固定项目已清除');
+            }
+            
+            getPinnedItems() {
+                return [...this.pinnedItems];
+            }
+        }
+
+        // 菜单管理功能类
+        class MenuManagement {
+            constructor() {
+                this.modal = null;
+                this.init();
+            }
+            
+            init() {
+                this.modal = document.getElementById('menuManagementModal');
+                this.bindEvents();
+                console.log('⚙️ 菜单管理功能已初始化');
+            }
+            
+            bindEvents() {
+                // 菜单设置按钮点击事件
+                const settingsBtn = document.getElementById('menuSettingsButton');
+                if (settingsBtn) {
+                    settingsBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.showModal();
+                    });
+                }
+                
+                // 关闭模态框事件
+                const closeBtn = document.getElementById('menuManagementClose');
+                const overlay = document.getElementById('menuManagementOverlay');
+                
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', () => this.hideModal());
+                }
+                
+                if (overlay) {
+                    overlay.addEventListener('click', () => this.hideModal());
+                }
+                
+                // ESC键关闭模态框
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && this.modal && this.modal.classList.contains('active')) {
+                        this.hideModal();
+                    }
+                });
+                
+                // 图钉功能按钮 - 使用延迟绑定
+                const enablePinsBtn = document.getElementById('enablePinsBtn');
+                const disablePinsBtn = document.getElementById('disablePinsBtn');
+                
+                if (enablePinsBtn) {
+                    enablePinsBtn.addEventListener('click', () => {
+                        if (window.pinManager) {
+                            window.pinManager.enablePins();
+                            this.updateButtonStates();
+                        } else {
+                            console.warn('图钉管理器未初始化');
+                        }
+                    });
+                }
+                
+                if (disablePinsBtn) {
+                    disablePinsBtn.addEventListener('click', () => {
+                        if (window.pinManager) {
+                            window.pinManager.disablePins();
+                            this.updateButtonStates();
+                        } else {
+                            console.warn('图钉管理器未初始化');
+                        }
+                    });
+                }
+                
+                // 收藏管理按钮
+                const resetStarsBtn = document.getElementById('resetStarsBtn');
+                const showStarredBtn = document.getElementById('showStarredBtn');
+                
+                if (resetStarsBtn && window.menuStarManager) {
+                    resetStarsBtn.addEventListener('click', () => {
+                        if (confirm('确定要重置所有收藏吗？这将清除当前收藏状态。')) {
+                            window.menuStarManager.resetStars();
+                            if (window.BrainBase && window.BrainBase.notify) {
+                                BrainBase.notify.show('收藏状态已重置', 'success', 2000);
+                            }
+                        }
+                    });
+                }
+                
+                if (showStarredBtn && window.menuStarManager) {
+                    showStarredBtn.addEventListener('click', () => {
+                        const starred = window.menuStarManager.starredItems;
+                        console.log('当前收藏的功能:', starred);
+                        
+                        if (window.BrainBase && window.BrainBase.notify) {
+                            BrainBase.notify.show(`当前收藏 ${starred.length} 个功能，详情请查看控制台`, 'info', 3000);
+                        }
+                    });
+                }
+                
+                // 图钉点击功能按钮 - 使用延迟绑定
+                const enablePinClickBtn = document.getElementById('enablePinClickBtn');
+                const disablePinClickBtn = document.getElementById('disablePinClickBtn');
+                const showPinnedItemsBtn = document.getElementById('showPinnedItemsBtn');
+                const resetPinnedBtn = document.getElementById('resetPinnedBtn');
+                
+                if (enablePinClickBtn) {
+                    enablePinClickBtn.addEventListener('click', () => {
+                        if (window.pinFixManager) {
+                            window.pinFixManager.enablePinClick();
+                            this.updateButtonStates();
+                        } else {
+                            console.warn('图钉固定管理器未初始化');
+                        }
+                    });
+                }
+                
+                if (disablePinClickBtn) {
+                    disablePinClickBtn.addEventListener('click', () => {
+                        if (window.pinFixManager) {
+                            window.pinFixManager.disablePinClick();
+                            this.updateButtonStates();
+                        } else {
+                            console.warn('图钉固定管理器未初始化');
+                        }
+                    });
+                }
+                
+                if (showPinnedItemsBtn) {
+                    showPinnedItemsBtn.addEventListener('click', () => {
+                        if (window.pinFixManager) {
+                            const pinnedItems = window.pinFixManager.getPinnedItems();
+                            console.log('当前固定的功能:', pinnedItems);
+                            
+                            if (window.BrainBase && window.BrainBase.notify) {
+                                BrainBase.notify.show(`当前固定 ${pinnedItems.length} 个功能，详情请查看控制台`, 'info', 3000);
+                            }
+                        } else {
+                            console.warn('图钉固定管理器未初始化');
+                        }
+                    });
+                }
+                
+                if (resetPinnedBtn) {
+                    resetPinnedBtn.addEventListener('click', () => {
+                        if (confirm('确定要清除所有固定的功能吗？被固定的功能将不再强制显示在侧边栏中。')) {
+                            if (window.pinFixManager) {
+                                window.pinFixManager.resetPinnedItems();
+                                if (window.BrainBase && window.BrainBase.notify) {
+                                    BrainBase.notify.show('已清除所有固定功能', 'success', 2000);
+                                }
+                                this.updateButtonStates();
+                            } else {
+                                console.warn('图钉固定管理器未初始化');
+                            }
+                        }
+                    });
+                }
+                
+                // 菜单样式按钮
+                const compactModeBtn = document.getElementById('compactModeBtn');
+                const normalModeBtn = document.getElementById('normalModeBtn');
+                const darkThemeBtn = document.getElementById('darkThemeBtn');
+                const lightThemeBtn = document.getElementById('lightThemeBtn');
+                
+                if (compactModeBtn) {
+                    compactModeBtn.addEventListener('click', () => {
+                        this.toggleCompactMode(true);
+                    });
+                }
+                
+                if (normalModeBtn) {
+                    normalModeBtn.addEventListener('click', () => {
+                        this.toggleCompactMode(false);
+                    });
+                }
+                
+                if (darkThemeBtn) {
+                    darkThemeBtn.addEventListener('click', () => {
+                        this.toggleDarkTheme(true);
+                    });
+                }
+                
+                if (lightThemeBtn) {
+                    lightThemeBtn.addEventListener('click', () => {
+                        this.toggleDarkTheme(false);
+                    });
+                }
+                
+                // 重置所有设置按钮
+                const resetAllBtn = document.getElementById('resetAllBtn');
+                if (resetAllBtn) {
+                    resetAllBtn.addEventListener('click', () => {
+                        if (confirm('确定要恢复所有设置到默认状态吗？此操作不可撤销！')) {
+                            this.resetAllSettings();
+                        }
+                    });
+                }
+            }
+            
+            showModal() {
+                if (this.modal) {
+                    this.modal.classList.add('active');
+                    this.updateButtonStates();
+                    console.log('⚙️ 菜单管理面板已打开');
+                }
+            }
+            
+            hideModal() {
+                if (this.modal) {
+                    this.modal.classList.remove('active');
+                    console.log('⚙️ 菜单管理面板已关闭');
+                }
+            }
+            
+            updateButtonStates() {
+                // 更新图钉按钮状态
+                const enablePinsBtn = document.getElementById('enablePinsBtn');
+                const disablePinsBtn = document.getElementById('disablePinsBtn');
+                
+                if (enablePinsBtn && disablePinsBtn && window.pinManager) {
+                    const pinsEnabled = window.pinManager.isPinsEnabled();
+                    
+                    if (pinsEnabled) {
+                        enablePinsBtn.style.background = '#28a745';
+                        enablePinsBtn.style.color = 'white';
+                        enablePinsBtn.style.borderColor = '#28a745';
+                        disablePinsBtn.style.background = '';
+                        disablePinsBtn.style.color = '';
+                        disablePinsBtn.style.borderColor = '';
+                    } else {
+                        disablePinsBtn.style.background = '#6c757d';
+                        disablePinsBtn.style.color = 'white';
+                        disablePinsBtn.style.borderColor = '#6c757d';
+                        enablePinsBtn.style.background = '';
+                        enablePinsBtn.style.color = '';
+                        enablePinsBtn.style.borderColor = '';
+                    }
+                }
+                
+                // 更新图钉点击功能按钮状态
+                const enablePinClickBtn = document.getElementById('enablePinClickBtn');
+                const disablePinClickBtn = document.getElementById('disablePinClickBtn');
+                
+                if (enablePinClickBtn && disablePinClickBtn && window.pinFixManager) {
+                    const pinClickEnabled = window.pinFixManager.isPinClickEnabled();
+                    
+                    if (pinClickEnabled) {
+                        enablePinClickBtn.style.background = '#007bff';
+                        enablePinClickBtn.style.color = 'white';
+                        enablePinClickBtn.style.borderColor = '#007bff';
+                        disablePinClickBtn.style.background = '';
+                        disablePinClickBtn.style.color = '';
+                        disablePinClickBtn.style.borderColor = '';
+                    } else {
+                        disablePinClickBtn.style.background = '#6c757d';
+                        disablePinClickBtn.style.color = 'white';
+                        disablePinClickBtn.style.borderColor = '#6c757d';
+                        enablePinClickBtn.style.background = '';
+                        enablePinClickBtn.style.color = '';
+                        enablePinClickBtn.style.borderColor = '';
+                    }
+                }
+            }
+            
+            toggleCompactMode(enable) {
+                const dropdownMenu = document.getElementById('dropdownMenu');
+                if (dropdownMenu) {
+                    if (enable) {
+                        dropdownMenu.classList.add('compact-mode');
+                        if (window.BrainBase && window.BrainBase.notify) {
+                            BrainBase.notify.show('已切换到紧凑模式', 'success', 2000);
+                        }
+                    } else {
+                        dropdownMenu.classList.remove('compact-mode');
+                        if (window.BrainBase && window.BrainBase.notify) {
+                            BrainBase.notify.show('已切换到正常模式', 'success', 2000);
+                        }
+                    }
+                }
+            }
+            
+            toggleDarkTheme(enable) {
+                const dropdownMenu = document.getElementById('dropdownMenu');
+                if (dropdownMenu) {
+                    if (enable) {
+                        dropdownMenu.classList.add('dark-theme');
+                        if (window.BrainBase && window.BrainBase.notify) {
+                            BrainBase.notify.show('已切换到深色主题', 'success', 2000);
+                        }
+                    } else {
+                        dropdownMenu.classList.remove('dark-theme');
+                        if (window.BrainBase && window.BrainBase.notify) {
+                            BrainBase.notify.show('已切换到浅色主题', 'success', 2000);
+                        }
+                    }
+                }
+            }
+            
+            resetAllSettings() {
+                // 重置图钉设置
+                if (window.pinManager) {
+                    window.pinManager.disablePins();
+                }
+                
+                // 重置收藏设置
+                if (window.menuStarManager) {
+                    window.menuStarManager.resetStars();
+                }
+                
+                // 重置菜单样式
+                const dropdownMenu = document.getElementById('dropdownMenu');
+                if (dropdownMenu) {
+                    dropdownMenu.classList.remove('compact-mode', 'dark-theme');
+                }
+                
+                // 清除其他本地存储设置
+                try {
+                    localStorage.removeItem('brainbase-pins-enabled');
+                    localStorage.removeItem('brainbase-starred-items');
+                } catch (e) {
+                    console.error('清除设置失败:', e);
+                }
+                
+                this.updateButtonStates();
+                
+                if (window.BrainBase && window.BrainBase.notify) {
+                    BrainBase.notify.show('所有设置已恢复到默认状态', 'success', 3000);
+                }
+                
+                console.log('🔄 所有菜单设置已重置');
             }
         }
 
@@ -2725,15 +3882,31 @@
         // 全局变量
         let menuStarManager;
         let deviceSimulator;
+        let pinManager;
+        let pinFixManager;
+        let menuManagement;
 
         // DOM加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
             // 初始化设备模拟器
             deviceSimulator = new DeviceSimulator();
             
-            // 初始化五角星管理器
+            // 初始化图钉管理器
+            pinManager = new PinManager();
+            
+            // 先初始化五角星管理器
+            menuStarManager = new MenuStarManager();
+            
+            // 然后初始化图钉固定功能管理器
             setTimeout(() => {
-                menuStarManager = new MenuStarManager();
+                pinFixManager = new PinFixManager();
+                window.pinFixManager = pinFixManager; // 设置到全局作用域
+                
+                // 在所有管理器初始化完成后，初始化菜单管理功能
+                setTimeout(() => {
+                    menuManagement = new MenuManagement();
+                    window.menuManagement = menuManagement;
+                }, 50);
             }, 100);
 
             // 初始化全局BrainBase对象
@@ -2741,6 +3914,10 @@
                 notify: notificationSystem,
                 deviceSimulator: deviceSimulator
             };
+            
+            // 将管理器添加到全局作用域
+            window.pinManager = pinManager;
+            window.menuStarManager = menuStarManager;
             
             // 下拉菜单功能
             const menuToggle = document.getElementById('menuToggle');
@@ -2882,6 +4059,54 @@
                     }
                 },
                 
+                // 图钉管理调试功能
+                enablePins: function() {
+                    if (pinManager) {
+                        pinManager.enablePins();
+                        console.log('📌 图钉显示已启用');
+                    } else {
+                        console.log('❌ 图钉管理器未初始化');
+                    }
+                },
+                
+                disablePins: function() {
+                    if (pinManager) {
+                        pinManager.disablePins();
+                        console.log('📌 图钉显示已禁用');
+                    } else {
+                        console.log('❌ 图钉管理器未初始化');
+                    }
+                },
+                
+                togglePins: function() {
+                    if (pinManager) {
+                        pinManager.togglePins();
+                        console.log(`📌 图钉显示已${pinManager.isPinsEnabled() ? '启用' : '禁用'}`);
+                    } else {
+                        console.log('❌ 图钉管理器未初始化');
+                    }
+                },
+                
+                showPinStatus: function() {
+                    if (pinManager) {
+                        const status = pinManager.isPinsEnabled() ? '启用' : '禁用';
+                        console.log(`📌 当前图钉显示状态: ${status}`);
+                        return pinManager.isPinsEnabled();
+                    } else {
+                        console.log('❌ 图钉管理器未初始化');
+                        return false;
+                    }
+                },
+                
+                openMenuSettings: function() {
+                    if (menuManagement) {
+                        menuManagement.showModal();
+                        console.log('⚙️ 菜单设置面板已打开');
+                    } else {
+                        console.log('❌ 菜单管理器未初始化');
+                    }
+                },
+                
                 selectDevice: function(deviceId) {
                     if (deviceSimulator) {
                         deviceSimulator.selectDevice(deviceId);
@@ -2895,171 +4120,83 @@
                     });
                 },
                 
-                // 新增：全面设备测试功能
-                testAllDevices: function() {
-                    console.log('🧪 开始全面设备模拟测试...');
-                    
-                    const deviceTypes = {
-                        mobile: [],
-                        tablet: [],
-                        desktop: []
-                    };
-                    
-                    // 按类型分组设备
-                    Object.entries(deviceConfigs).forEach(([id, config]) => {
-                        deviceTypes[config.type].push({ id, ...config });
-                    });
-                    
-                    console.log('📱 手机设备 (6款):');
-                    deviceTypes.mobile.forEach(device => {
-                        console.log(`  ✓ ${device.name} - ${device.width}×${device.height}`);
-                    });
-                    
-                    console.log('📟 平板设备 (4款):');
-                    deviceTypes.tablet.forEach(device => {
-                        console.log(`  ✓ ${device.name} - ${device.width}×${device.height}`);
-                    });
-                    
-                    console.log('🖥️ 桌面设备 (3款):');
-                    deviceTypes.desktop.forEach(device => {
-                        console.log(`  ✓ ${device.name} - ${device.width}×${device.height}`);
-                    });
-                    
-                    console.log(`\n📊 统计信息:`);
-                    console.log(`- 总设备数: ${Object.keys(deviceConfigs).length}`);
-                    console.log(`- 手机设备: ${deviceTypes.mobile.length}款`);
-                    console.log(`- 平板设备: ${deviceTypes.tablet.length}款`);
-                    console.log(`- 桌面设备: ${deviceTypes.desktop.length}款`);
-                    
-                    return deviceTypes;
-                },
-                
-                // 验证设备数据完整性
-                validateDevices: function() {
-                    console.log('🔍 验证设备数据完整性...');
-                    
-                    let errors = [];
-                    let warnings = [];
-                    
-                    Object.entries(deviceConfigs).forEach(([id, config]) => {
-                        // 检查必需字段
-                        if (!config.name) errors.push(`${id}: 缺少设备名称`);
-                        if (!config.width || !config.height) errors.push(`${id}: 缺少尺寸数据`);
-                        if (!config.type) errors.push(`${id}: 缺少设备类型`);
-                        
-                        // 检查数据类型
-                        if (typeof config.width !== 'number') errors.push(`${id}: 宽度应为数字`);
-                        if (typeof config.height !== 'number') errors.push(`${id}: 高度应为数字`);
-                        
-                        // 检查设备类型
-                        if (!['mobile', 'tablet', 'desktop'].includes(config.type)) {
-                            errors.push(`${id}: 设备类型无效 (${config.type})`);
-                        }
-                        
-                        // 检查分辨率合理性
-                        if (config.type === 'mobile' && (config.width > 500 || config.height > 1000)) {
-                            warnings.push(`${id}: 手机分辨率可能过大`);
-                        }
-                        if (config.type === 'desktop' && (config.width < 1000 || config.height < 600)) {
-                            warnings.push(`${id}: 桌面分辨率可能过小`);
-                        }
-                    });
-                    
-                    if (errors.length === 0) {
-                        console.log('✅ 所有设备数据验证通过');
-                    } else {
-                        console.error('❌ 发现错误:', errors);
-                    }
-                    
-                    if (warnings.length > 0) {
-                        console.warn('⚠️ 警告:', warnings);
-                    }
-                    
-                    return { errors, warnings };
-                },
-                
-                // 测试旋转功能
-                testRotation: function() {
-                    console.log('🔄 测试设备旋转功能...');
-                    
-                    if (!deviceSimulator.isOpen) {
-                        console.log('请先选择一个设备进行模拟');
-                        return;
-                    }
-                    
-                    const currentConfig = deviceSimulator.getCurrentDevice();
-                    if (!currentConfig) {
-                        console.log('未找到当前设备配置');
-                        return;
-                    }
-                    
-                    if (currentConfig.type === 'desktop') {
-                        console.log('🖥️ 桌面设备不支持旋转');
-                        return;
-                    }
-                    
-                    console.log(`📱 ${currentConfig.name} 旋转测试:`);
-                    console.log(`- 竖屏: ${currentConfig.width}×${currentConfig.height}`);
-                    console.log(`- 横屏: ${currentConfig.height}×${currentConfig.width}`);
-                    
-                    // 自动测试旋转
-                    deviceSimulator.rotateDevice();
-                    setTimeout(() => {
-                        console.log('✅ 旋转功能测试完成');
-                    }, 500);
-                },
-                
-                // 快速切换设备测试
-                quickTest: function() {
-                    console.log('⚡ 快速设备切换测试...');
-                    
-                    const testDevices = [
-                        'iphone-14-pro',
-                        'ipad-air', 
-                        'desktop-1920'
-                    ];
-                    
-                    let index = 0;
-                    const testNext = () => {
-                        if (index < testDevices.length) {
-                            const deviceId = testDevices[index];
-                            const config = deviceConfigs[deviceId];
-                            console.log(`📲 测试: ${config.name}`);
-                            BrainBaseDebug.selectDevice(deviceId);
-                            index++;
-                            setTimeout(testNext, 2000);
-                        } else {
-                            console.log('✅ 快速测试完成');
-                        }
-                    };
-                    
-                    testNext();
-                },
-                
                 help: function() {
                     console.log(`
-🔧 BrainBase 设备模拟器调试工具
-
-基础功能：
-- BrainBaseDebug.showDevices() - 查看所有可用设备
-- BrainBaseDebug.selectDevice('iphone-14-pro') - 选择特定设备
-
-测试功能：
-- BrainBaseDebug.testAllDevices() - 显示完整设备清单
-- BrainBaseDebug.validateDevices() - 验证设备数据完整性
-- BrainBaseDebug.testRotation() - 测试当前设备旋转功能
-- BrainBaseDebug.quickTest() - 快速切换设备测试
+🔧 BrainBase 系统调试工具
 
 收藏管理：
 - BrainBaseDebug.showStarredItems() - 查看当前收藏
 - BrainBaseDebug.resetStars() - 重置收藏状态
+
+图钉管理：
+- BrainBaseDebug.enablePins() - 启用侧边栏图钉显示
+- BrainBaseDebug.disablePins() - 禁用侧边栏图钉显示
+- BrainBaseDebug.togglePins() - 切换图钉显示状态
+- BrainBaseDebug.showPinStatus() - 查看图钉状态
+
+菜单管理：
+- BrainBaseDebug.openMenuSettings() - 打开菜单设置面板
+
+设备模拟：
+- BrainBaseDebug.showDevices() - 查看所有可用设备
+- BrainBaseDebug.selectDevice('iphone-14-pro') - 选择特定设备
 
 设备ID列表：
 手机: iphone-14-pro-max, iphone-14-pro, iphone-se, samsung-s23-ultra, samsung-s23, pixel-7-pro
 平板: ipad-air, ipad-mini, galaxy-tab-s8, surface-pro
 桌面: desktop-1920, desktop-1440, laptop-1366
                     `);
-                }
+                },
+                
+                // 图钉固定功能调试
+                enablePinClick: function() {
+                    if (pinFixManager) {
+                        pinFixManager.enablePinClick();
+                        console.log('📌 图钉点击功能已启用');
+                    } else {
+                        console.log('❌ 图钉固定管理器未初始化');
+                    }
+                },
+                
+                disablePinClick: function() {
+                    if (pinFixManager) {
+                        pinFixManager.disablePinClick();
+                        console.log('📌 图钉点击功能已禁用');
+                    } else {
+                        console.log('❌ 图钉固定管理器未初始化');
+                    }
+                },
+                
+                showPinnedItems: function() {
+                    if (pinFixManager) {
+                        const pinnedItems = pinFixManager.getPinnedItems();
+                        console.log(`📌 当前固定的功能 (${pinnedItems.length}个):`, pinnedItems);
+                        return pinnedItems;
+                    } else {
+                        console.log('❌ 图钉固定管理器未初始化');
+                        return [];
+                    }
+                },
+                
+                resetPinnedItems: function() {
+                    if (pinFixManager) {
+                        pinFixManager.resetPinnedItems();
+                        console.log('📌 所有固定项目已清除');
+                    } else {
+                        console.log('❌ 图钉固定管理器未初始化');
+                    }
+                },
+                
+                showPinClickStatus: function() {
+                    if (pinFixManager) {
+                        const status = pinFixManager.isPinClickEnabled() ? '启用' : '禁用';
+                        console.log(`📌 当前图钉点击功能状态: ${status}`);
+                        return pinFixManager.isPinClickEnabled();
+                    } else {
+                        console.log('❌ 图钉固定管理器未初始化');
+                        return false;
+                    }
+                },
             };
 
             console.log('🎉 BrainBase 系统已完全加载！');

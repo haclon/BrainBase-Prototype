@@ -1,0 +1,32 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# BrainBase-Prototype - 企业级用户权限管理平台原型
+
+## 项目概述
+BrainBase-Prototype是BrainBase企业级用户权限管理系统的功能原型，使用原生HTML技术栈快速构建，用于需求验证和设计确认。
+本原型将为后续Angular正式项目提供清晰的功能参考和设计规范。
+
+## 项目定位
+- **当前阶段**：功能原型开发和需求验证
+- **技术选型**：原生HTML + Tailwind CSS + JavaScript
+- **交付目标**：可演示的完整功能原型
+- **后续计划**：基于原型开发Angular正式项目
+
+## 开发目标
+- 快速构建功能原型，验证核心需求
+- 确定UI/UX设计方案和交互流程
+- 为Angular项目提供详细的功能规格说明
+- 建立完整的权限管理业务逻辑模型
+
+## 技术栈
+- **HTML5**：语义化结构，遵循最佳实践
+- **CSS3**：主要使用Tailwind CSS CDN，少量自定义样式
+- **JavaScript**：ES6+，模块化编程，详细注释
+- **图标**：Font Awesome 6.0 CDN
+- **字体**：系统默认字体栈
+
+## 项目结构
+
