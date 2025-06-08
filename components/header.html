@@ -1,0 +1,273 @@
+<!-- 顶部导航栏组件 -->
+<header class="gitee-header fixed w-full top-0 z-50">
+    <div class="flex items-center justify-between h-full px-4">
+        <!-- 左侧：Logo和导航 -->
+        <div class="flex items-center">
+            <!-- 下拉菜单按钮 -->
+            <div class="menu-button-container">
+                <button class="mobile-menu-button" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <!-- 下拉菜单 -->
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-menu-content">
+                        <div class="dropdown-menu-sidebar">
+                            <!-- 左侧分类导航 -->
+                            <a href="#" class="dropdown-menu-category active" data-category="core">
+                                <i class="fas fa-cube"></i>核心功能
+                            </a>
+                            <a href="#" class="dropdown-menu-category" data-category="organization">
+                                <i class="fas fa-sitemap"></i>组织管理
+                            </a>
+                            <a href="#" class="dropdown-menu-category" data-category="monitoring">
+                                <i class="fas fa-chart-line"></i>监控分析
+                            </a>
+                            <a href="#" class="dropdown-menu-category" data-category="system">
+                                <i class="fas fa-cogs"></i>系统设置
+                            </a>
+                        </div>
+                        
+                        <div class="dropdown-menu-main">
+                            <!-- 核心功能区域 -->
+                            <div class="dropdown-menu-section active" data-section="core">
+                                <div class="dropdown-menu-section-title">核心功能</div>
+                                <div class="dropdown-menu-items">
+                                    <a href="dashboard.html" class="dropdown-menu-item" data-menu-id="dashboard">
+                                        <i class="fas fa-star dropdown-menu-item-star"></i>
+                                        <i class="fas fa-home"></i>
+                                        <div class="dropdown-menu-item-content">
+                                            <div class="dropdown-menu-item-title">仪表盘</div>
+                                        </div>
+                                    </a>
+                                    
+                                    <a href="user-management.html" class="dropdown-menu-item" data-menu-id="user-management">
+                                        <i class="fas fa-star dropdown-menu-item-star"></i>
+                                        <i class="fas fa-users"></i>
+                                        <div class="dropdown-menu-item-content">
+                                            <div class="dropdown-menu-item-title">用户管理</div>
+                                        </div>
+                                        <span class="dropdown-menu-item-badge">3</span>
+                                    </a>
+                                    
+                                    <a href="role-management.html" class="dropdown-menu-item" data-menu-id="role-management">
+                                        <i class="fas fa-star dropdown-menu-item-star"></i>
+                                        <i class="fas fa-user-tag"></i>
+                                        <div class="dropdown-menu-item-content">
+                                            <div class="dropdown-menu-item-title">角色管理</div>
+                                        </div>
+                                    </a>
+                                    
+                                    <a href="permission-config.html" class="dropdown-menu-item" data-menu-id="permission-config">
+                                        <i class="fas fa-star dropdown-menu-item-star"></i>
+                                        <i class="fas fa-shield-alt"></i>
+                                        <div class="dropdown-menu-item-content">
+                                            <div class="dropdown-menu-item-title">权限配置</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- 组织管理区域 -->
+                            <div class="dropdown-menu-section" data-section="organization">
+                                <div class="dropdown-menu-section-title">组织管理</div>
+                                <div class="dropdown-menu-items">
+                                    <a href="department-management.html" class="dropdown-menu-item" data-menu-id="department-management">
+                                        <i class="fas fa-star dropdown-menu-item-star"></i>
+                                        <i class="fas fa-sitemap"></i>
+                                        <div class="dropdown-menu-item-content">
+                                            <div class="dropdown-menu-item-title">部门管理</div>
+                                        </div>
+                                    </a>
+                                    
+                                    <a href="menu-management.html" class="dropdown-menu-item" data-menu-id="menu-management">
+                                        <i class="fas fa-star dropdown-menu-item-star"></i>
+                                        <i class="fas fa-list"></i>
+                                        <div class="dropdown-menu-item-content">
+                                            <div class="dropdown-menu-item-title">菜单管理</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- 监控分析区域 -->
+                            <div class="dropdown-menu-section" data-section="monitoring">
+                                <div class="dropdown-menu-section-title">监控分析</div>
+                                <div class="dropdown-menu-items">
+                                    <a href="operation-log.html" class="dropdown-menu-item" data-menu-id="operation-log">
+                                        <i class="fas fa-star dropdown-menu-item-star"></i>
+                                        <i class="fas fa-file-alt"></i>
+                                        <div class="dropdown-menu-item-content">
+                                            <div class="dropdown-menu-item-title">操作日志</div>
+                                        </div>
+                                        <span class="dropdown-menu-item-badge">8</span>
+                                    </a>
+                                    
+                                    <a href="statistics.html" class="dropdown-menu-item" data-menu-id="statistics">
+                                        <i class="fas fa-star dropdown-menu-item-star"></i>
+                                        <i class="fas fa-chart-bar"></i>
+                                        <div class="dropdown-menu-item-content">
+                                            <div class="dropdown-menu-item-title">统计报表</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- 系统设置区域 -->
+                            <div class="dropdown-menu-section" data-section="system">
+                                <div class="dropdown-menu-section-title">系统设置</div>
+                                <div class="dropdown-menu-items">
+                                    <a href="system-settings.html" class="dropdown-menu-item" data-menu-id="system-settings">
+                                        <i class="fas fa-star dropdown-menu-item-star"></i>
+                                        <i class="fas fa-cog"></i>
+                                        <div class="dropdown-menu-item-content">
+                                            <div class="dropdown-menu-item-title">系统设置</div>
+                                        </div>
+                                    </a>
+                                    
+                                    <a href="user-profile.html" class="dropdown-menu-item" data-menu-id="user-profile">
+                                        <i class="fas fa-star dropdown-menu-item-star"></i>
+                                        <i class="fas fa-user"></i>
+                                        <div class="dropdown-menu-item-content">
+                                            <div class="dropdown-menu-item-title">个人中心</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 菜单管理齿轮图标 -->
+                        <div class="menu-settings-button" id="menuSettingsButton">
+                            <i class="fas fa-cog"></i>
+                            <div class="menu-settings-tooltip">菜单管理</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center">
+                <div class="h-8 w-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fas fa-user-shield text-white text-sm"></i>
+                </div>
+                <span class="ml-2 text-lg font-semibold text-gray-900">{{SITE_NAME}}</span>
+            </div>
+            <!-- 主导航菜单 -->
+            <nav class="hidden lg:flex ml-8 space-x-6">
+                <a href="#" class="text-gray-600 hover:text-gray-900 pb-2">仪表盘</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900 pb-2">用户管理</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900 pb-2">角色权限</a>
+                <a href="#" class="text-gray-900 font-medium border-b-2 border-blue-600 pb-2">系统管理</a>
+            </nav>
+        </div>
+        <!-- 右侧：搜索和用户信息 -->
+        <div class="flex items-center space-x-4">
+            <div class="relative hidden md:block">
+                <input type="text" placeholder="搜索用户、角色、权限..." class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <i class="fas fa-search absolute left-3 top-3 text-gray-400 text-sm"></i>
+            </div>
+            <button class="text-gray-600 hover:text-gray-900 relative">
+                <i class="fas fa-bell text-lg"></i>
+                <span class="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+            </button>
+            <div class="flex items-center space-x-2">
+                <img class="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="用户头像">
+                <span class="text-sm font-medium text-gray-700 hidden md:block">{{USER_NAME}}</span>
+                <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                
+                <!-- 设备模拟切换按钮 -->
+                <div class="device-simulator-container" id="deviceSimulatorContainer">
+                    <button class="device-simulator-toggle" id="deviceSimulatorToggle">
+                        <i class="fas fa-mobile-alt" id="deviceIcon"></i>
+                    </button>
+                    
+                    <!-- 设备选择下拉菜单 -->
+                    <div class="device-selector-dropdown" id="deviceSelectorDropdown">
+                        <div class="device-category" data-category="mobile">
+                            <div class="device-category-title">
+                                <i class="fas fa-mobile-alt"></i>
+                                手机设备
+                            </div>
+                            <div class="device-list">
+                                <div class="device-item" data-device="iphone-14-pro-max">
+                                    <div class="device-name">iPhone 14 Pro Max</div>
+                                    <div class="device-specs">430×932</div>
+                                </div>
+                                <div class="device-item" data-device="iphone-14-pro">
+                                    <div class="device-name">iPhone 14 Pro</div>
+                                    <div class="device-specs">393×852</div>
+                                </div>
+                                <div class="device-item" data-device="iphone-se">
+                                    <div class="device-name">iPhone SE</div>
+                                    <div class="device-specs">375×667</div>
+                                </div>
+                                <div class="device-item" data-device="samsung-s23-ultra">
+                                    <div class="device-name">Galaxy S23 Ultra</div>
+                                    <div class="device-specs">412×915</div>
+                                </div>
+                                <div class="device-item" data-device="samsung-s23">
+                                    <div class="device-name">Galaxy S23</div>
+                                    <div class="device-specs">360×780</div>
+                                </div>
+                                <div class="device-item" data-device="pixel-7-pro">
+                                    <div class="device-name">Pixel 7 Pro</div>
+                                    <div class="device-specs">412×892</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="device-category" data-category="tablet">
+                            <div class="device-category-title">
+                                <i class="fas fa-tablet-alt"></i>
+                                平板设备
+                            </div>
+                            <div class="device-list">
+                                <div class="device-item" data-device="ipad-air">
+                                    <div class="device-name">iPad Air</div>
+                                    <div class="device-specs">820×1180</div>
+                                </div>
+                                <div class="device-item" data-device="ipad-mini">
+                                    <div class="device-name">iPad Mini</div>
+                                    <div class="device-specs">744×1133</div>
+                                </div>
+                                <div class="device-item" data-device="galaxy-tab-s8">
+                                    <div class="device-name">Galaxy Tab S8</div>
+                                    <div class="device-specs">753×1037</div>
+                                </div>
+                                <div class="device-item" data-device="surface-pro">
+                                    <div class="device-name">Surface Pro</div>
+                                    <div class="device-specs">912×1368</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="device-category" data-category="desktop">
+                            <div class="device-category-title">
+                                <i class="fas fa-desktop"></i>
+                                桌面设备
+                            </div>
+                            <div class="device-list">
+                                <div class="device-item" data-device="desktop-1920">
+                                    <div class="device-name">标准桌面</div>
+                                    <div class="device-specs">1920×1080</div>
+                                </div>
+                                <div class="device-item" data-device="desktop-1440">
+                                    <div class="device-name">高清桌面</div>
+                                    <div class="device-specs">2560×1440</div>
+                                </div>
+                                <div class="device-item" data-device="laptop-1366">
+                                    <div class="device-name">笔记本电脑</div>
+                                    <div class="device-specs">1366×768</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 布局设置按钮 -->
+                <button class="device-simulator-toggle" id="layoutSettingsToggle" title="布局设置">
+                    <i class="fas fa-cogs"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</header> 
