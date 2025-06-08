@@ -1,0 +1,528 @@
+/* 设备模拟器样式 */
+
+/* 设备模拟切换按钮样式 */
+.device-simulator-container {
+    position: relative;
+    display: inline-block;
+}
+
+.device-simulator-toggle {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #6c757d;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
+}
+
+.device-simulator-toggle:hover {
+    background: #f8f9fa;
+    border-color: #007bff;
+    color: #007bff;
+    transform: scale(1.05);
+}
+
+.device-simulator-toggle i {
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.device-simulator-toggle:hover i {
+    transform: scale(1.1);
+}
+
+/* 设备选择下拉菜单 */
+.device-selector-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 320px;
+    max-height: 480px;
+    background: white;
+    border: 1px solid #e1e4e8;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    margin-top: 8px;
+}
+
+.device-selector-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.device-category {
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.device-category:last-child {
+    border-bottom: none;
+}
+
+.device-category-title {
+    padding: 12px 16px;
+    background: #f8f9fa;
+    color: #495057;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.device-category-title i {
+    color: #6c757d;
+}
+
+.device-list {
+    padding: 8px 0;
+}
+
+.device-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 3px solid transparent;
+}
+
+.device-item:hover {
+    background: #f8f9fa;
+    border-left-color: #007bff;
+}
+
+.device-item.active {
+    background: #e3f2fd;
+    border-left-color: #007bff;
+}
+
+.device-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #212529;
+}
+
+.device-specs {
+    font-size: 12px;
+    color: #6c757d;
+    font-family: 'Courier New', monospace;
+}
+
+.device-item:hover .device-name {
+    color: #007bff;
+}
+
+.device-item:hover .device-specs {
+    color: #495057;
+}
+
+/* 页面模拟容器 */
+.page-simulator-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #f0f2f5;
+    z-index: 999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.page-simulator-container.active {
+    display: flex;
+}
+
+/* 设备控制按钮 - 只在模拟器激活时显示 */
+.device-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: none;
+    flex-direction: row;
+    gap: 12px;
+    z-index: 1002;
+}
+
+.page-simulator-container.active .device-controls {
+    display: flex;
+}
+
+/* 设备信息 - 只在模拟器激活时显示 */
+.device-info {
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    display: none;
+    white-space: nowrap;
+}
+
+.page-simulator-container.active .device-info {
+    display: block;
+}
+
+.device-frame {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    position: relative;
+    transition: all 0.4s ease;
+}
+
+.device-frame.mobile {
+    width: 375px;
+    height: 667px;
+}
+
+.device-frame.tablet {
+    width: 768px;
+    height: 1024px;
+}
+
+.device-frame.desktop {
+    width: 90%;
+    height: 90%;
+    max-width: 1440px;
+    max-height: 900px;
+}
+
+.device-screen {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+}
+
+.device-control-btn {
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #495057;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.device-control-btn:hover {
+    background: rgba(0, 123, 255, 0.95);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 20px rgba(0, 123, 255, 0.3);
+}
+
+.device-control-btn:active {
+    transform: scale(0.95);
+}
+
+/* 控制按钮工具提示 */
+.device-control-btn {
+    position: relative;
+}
+
+.device-control-btn::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    right: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 1003;
+}
+
+.device-control-btn:hover::after {
+    opacity: 1;
+    visibility: visible;
+    right: 52px;
+}
+
+/* 设备模拟模式状态指示 */
+.device-simulator-indicator {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #28a745;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.device-simulator-button.active .device-simulator-indicator {
+    opacity: 1;
+}
+
+/* 设备模拟样式覆盖 */
+.device-mode-mobile * {
+    box-sizing: border-box;
+}
+
+/* 移动端模式样式 */
+.device-mode-mobile .gitee-sidebar {
+    position: fixed !important;
+    left: 0 !important;
+    top: auto !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 80px !important;
+    max-height: 80px !important;
+    transform: translateX(0) !important;
+    background: rgba(248, 249, 250, 0.98) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 0 !important;
+    border-top: 1px solid rgba(222, 226, 230, 0.8) !important;
+    box-shadow: 0 -2px 20px rgba(108, 117, 125, 0.15) !important;
+    z-index: 100 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+}
+
+.device-mode-mobile .gitee-sidebar .py-4 {
+    padding: 8px 12px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+}
+
+.device-mode-mobile .gitee-sidebar .gitee-nav-item {
+    width: 60px !important;
+    height: 60px !important;
+    min-width: 60px !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 6px 4px !important;
+    margin: 0 !important;
+    text-align: center !important;
+    border-radius: 8px !important;
+    flex-shrink: 0 !important;
+}
+
+.device-mode-mobile .gitee-sidebar .gitee-nav-item i {
+    font-size: 18px !important;
+    margin-right: 0 !important;
+    margin-bottom: 2px !important;
+}
+
+.device-mode-mobile .gitee-sidebar .gitee-nav-item .nav-text {
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    display: block !important;
+    opacity: 1 !important;
+}
+
+.device-mode-mobile .gitee-sidebar .gitee-nav-item .nav-text-full {
+    display: none !important;
+}
+
+.device-mode-mobile .gitee-sidebar .sidebar-background-extension {
+    display: none !important;
+}
+
+.device-mode-mobile .gitee-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    margin-bottom: 80px !important;
+}
+
+.device-mode-mobile .notification-container {
+    bottom: 90px !important;
+}
+
+/* 平板模式样式 */
+.device-mode-tablet .gitee-sidebar {
+    position: fixed !important;
+    left: 0 !important;
+    top: 60px !important;
+    z-index: 50 !important;
+    width: 200px !important;
+    height: calc(100vh - 60px) !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s ease-in-out !important;
+    background: rgba(248, 249, 250, 0.95) !important;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.device-mode-tablet .gitee-sidebar.mobile-open {
+    transform: translateX(0) !important;
+}
+
+.device-mode-tablet .gitee-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+}
+
+.device-mode-tablet .gitee-nav-item {
+    width: auto !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    padding: 12px 20px !important;
+    margin: 2px 10px !important;
+    text-align: left !important;
+}
+
+.device-mode-tablet .gitee-nav-item i {
+    font-size: 16px !important;
+    margin-right: 12px !important;
+    margin-bottom: 0 !important;
+}
+
+.device-mode-tablet .gitee-nav-item .nav-text {
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    opacity: 1 !important;
+    display: block !important;
+}
+
+.device-mode-tablet .gitee-nav-item .nav-text-full {
+    display: none !important;
+}
+
+.device-mode-tablet .mobile-menu-button {
+    display: block !important;
+}
+
+/* PC模式重置样式 */
+.device-mode-pc .gitee-sidebar {
+    position: fixed !important;
+    left: 0 !important;
+    top: 60px !important;
+    width: 80px !important;
+    height: calc(100vh - 60px) !important;
+    transform: translateX(0) !important;
+    background: rgba(248, 249, 250, 0.95) !important;
+    border-radius: 0 12px 12px 0 !important;
+    box-shadow: 0 2px 12px rgba(108, 117, 125, 0.08) !important;
+    overflow-y: auto !important;
+    overflow-x: visible !important;
+    bottom: auto !important;
+    backdrop-filter: none !important;
+    border-top: none !important;
+}
+
+.device-mode-pc .gitee-sidebar:hover {
+    width: 200px !important;
+}
+
+.device-mode-pc .gitee-content {
+    margin-left: 80px !important;
+    width: calc(100% - 80px) !important;
+    margin-bottom: 0 !important;
+}
+
+.device-mode-pc .gitee-nav-item {
+    width: 50px !important;
+    height: auto !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 6px 0 !important;
+    margin: 1px 0 !important;
+    text-align: center !important;
+}
+
+.device-mode-pc .gitee-nav-item i {
+    font-size: 18px !important;
+    margin-bottom: 2px !important;
+    margin-right: 0 !important;
+}
+
+.device-mode-pc .gitee-nav-item .nav-text {
+    font-size: 12px !important;
+    opacity: 1 !important;
+    display: block !important;
+}
+
+.device-mode-pc .gitee-nav-item .nav-text-full {
+    display: block !important;
+}
+
+.device-mode-pc .sidebar-background-extension {
+    display: block !important;
+}
+
+.device-mode-pc .mobile-menu-button {
+    display: none !important;
+}
+
+/* 图钉在不同设备模式下的适配 - 美化版 */
+.device-mode-mobile .sidebar-pin {
+    bottom: 1px;
+    right: 1px;
+    width: 6px;
+    height: 6px;
+    border-radius: 1px 6px 1px 1px;
+}
+
+.device-mode-mobile .sidebar-pin::before {
+    width: 2px;
+    height: 2px;
+    top: 0.5px;
+    left: 0.5px;
+}
+
+.device-mode-tablet .sidebar-pin {
+    bottom: 2px;
+    right: 2px;
+    width: 7px;
+    height: 7px;
+    border-radius: 1.5px 7px 1.5px 1.5px;
+}
+
+.device-mode-tablet .sidebar-pin::before {
+    width: 2.5px;
+    height: 2.5px;
+    top: 0.5px;
+    left: 0.5px;
+} 

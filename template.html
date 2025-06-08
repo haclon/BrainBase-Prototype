@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{PAGE_TITLE}} - {{SITE_NAME}}</title>
+    
+    <!-- 外部依赖 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- 自定义样式文件 -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/device-simulator.css">
+    <link rel="stylesheet" href="assets/css/menu-management.css">
+    <link rel="stylesheet" href="assets/css/layout-settings.css">
+    
+    <!-- 页面特定样式 -->
+    {{PAGE_STYLES}}
+    
+    <style>
+        /* 页面加载器样式 */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+        
+        .page-loader.loader-hiding {
+            opacity: 0;
+        }
+        
+        .loader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+        
+        .loader-text {
+            font-size: 16px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        /* 布局设置面板样式 */
+        .layout-settings-panel {
+            position: fixed;
+            top: 50%;
+            right: -400px;
+            transform: translateY(-50%);
+            width: 360px;
+            background: white;
+            border-radius: 12px 0 0 12px;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            transition: right 0.3s ease;
+            border: 1px solid #e2e8f0;
+            border-right: none;
+        }
+        
+        .layout-settings-panel.show {
+            right: 0;
+        }
+        
+        .layout-settings-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px 0 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .layout-settings-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .layout-settings-body {
+            padding: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .setting-group {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f1f3f4;
+        }
+        
+        .setting-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .setting-group label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .setting-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #667eea;
+        }
+        
+        .setting-group input[type="range"] {
+            width: 120px;
+            accent-color: #667eea;
+        }
+        
+        .setting-group select {
+            padding: 4px 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 13px;
+            background: white;
+        }
+        
+        .setting-group .value {
+            font-size: 12px;
+            color: #6b7280;
+            margin-left: 8px;
+            min-width: 40px;
+        }
+        
+        .setting-actions {
+            display: flex;
+            gap: 10px;
+            padding-top: 16px;
+            border-top: 1px solid #f1f3f4;
+            margin-top: 16px;
+        }
+        
+        .setting-actions .btn {
+            flex: 1;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 页面加载器 -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">正在加载页面...</div>
+    </div>
+
+    <!-- 顶部导航栏容器 -->
+    <div id="headerContainer"></div>
+
+    <!-- 移动端遮罩层 -->
+    <div id="mobileOverlay" class="mobile-overlay"></div>
+    
+    <div class="flex pt-16">
+        <!-- 侧边栏容器 -->
+        <div id="sidebarContainer"></div>
+
+        <!-- 主内容区域 -->
+        <main class="gitee-content p-6" id="mainContent">
+            {{PAGE_CONTENT}}
+        </main>
+    </div>
+
+    <!-- 页面模拟容器 -->
+    <div class="page-simulator-container" id="pageSimulatorContainer">
+        <!-- 设备控制按钮 -->
+        <div class="device-controls" id="deviceControls">
+            <button class="device-control-btn" id="rotateDevice" data-tooltip="旋转设备">
+                <i class="fas fa-redo"></i>
+            </button>
+            <button class="device-control-btn" id="closeSimulator" data-tooltip="关闭模拟器">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- 设备信息 -->
+        <div class="device-info" id="deviceInfo">
+            设备信息
+        </div>
+        
+        <div class="device-frame" id="deviceFrame">
+            <iframe class="device-screen" id="deviceScreen" src=""></iframe>
+        </div>
+    </div>
+
+    <!-- 菜单管理模态框 -->
+    <div class="menu-management-modal" id="menuManagementModal">
+        <div class="menu-management-overlay" id="menuManagementOverlay"></div>
+        <div class="menu-management-content">
+            <div class="menu-management-header">
+                <h3>
+                    <i class="fas fa-cogs"></i>
+                    菜单设置管理
+                </h3>
+                <button class="menu-management-close" id="menuManagementClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="menu-management-body">
+                <!-- 图钉显示设置 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-thumbtack" style="color: #dc3545;"></i>
+                        侧边栏图钉显示
+                    </h4>
+                    <p class="menu-management-desc">
+                        控制侧边栏导航按钮右下角的小图钉是否显示。图钉可以作为视觉标识，帮助用户快速识别重要功能。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-outline" id="enablePinsBtn">
+                            <i class="fas fa-eye"></i>
+                            启用图钉显示
+                        </button>
+                        <button class="btn btn-outline" id="disablePinsBtn">
+                            <i class="fas fa-eye-slash"></i>
+                            禁用图钉显示
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 图钉点击固定功能 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-map-pin" style="color: #dc3545;"></i>
+                        图钉点击固定功能
+                    </h4>
+                    <p class="menu-management-desc">
+                        启用后，点击侧边栏图钉可以将该功能固定显示，不受五角星收藏状态影响。被固定的功能会持续显示在侧边栏中，直到再次点击图钉取消固定。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-outline" id="enablePinClickBtn">
+                            <i class="fas fa-mouse-pointer"></i>
+                            启用图钉点击
+                        </button>
+                        <button class="btn btn-outline" id="disablePinClickBtn">
+                            <i class="fas fa-ban"></i>
+                            禁用图钉点击
+                        </button>
+                        <button class="btn btn-outline" id="showPinnedItemsBtn">
+                            <i class="fas fa-list-check"></i>
+                            查看固定项目
+                        </button>
+                        <button class="btn btn-outline" id="resetPinnedBtn">
+                            <i class="fas fa-undo"></i>
+                            清除所有固定
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 收藏管理 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-star" style="color: #fbbf24;"></i>
+                        收藏管理
+                    </h4>
+                    <p class="menu-management-desc">
+                        管理侧边栏显示的收藏功能。只有收藏的功能会显示在左侧导航栏中。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-outline" id="resetStarsBtn">
+                            <i class="fas fa-undo"></i>
+                            重置收藏
+                        </button>
+                        <button class="btn btn-outline" id="showStarredBtn">
+                            <i class="fas fa-list"></i>
+                            查看收藏列表
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 菜单样式 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-palette" style="color: #8b5cf6;"></i>
+                        菜单样式
+                    </h4>
+                    <p class="menu-management-desc">
+                        调整下拉菜单的显示样式和主题设置。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-outline" id="compactModeBtn">
+                            <i class="fas fa-compress"></i>
+                            紧凑模式
+                        </button>
+                        <button class="btn btn-outline" id="normalModeBtn">
+                            <i class="fas fa-expand"></i>
+                            正常模式
+                        </button>
+                        <button class="btn btn-outline" id="darkThemeBtn">
+                            <i class="fas fa-moon"></i>
+                            深色主题
+                        </button>
+                        <button class="btn btn-outline" id="lightThemeBtn">
+                            <i class="fas fa-sun"></i>
+                            浅色主题
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 危险操作 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i>
+                        重置设置
+                    </h4>
+                    <p class="menu-management-desc">
+                        恢复所有菜单设置到默认状态。此操作不可撤销。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-danger" id="resetAllBtn">
+                            <i class="fas fa-trash-restore"></i>
+                            恢复默认设置
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知容器 -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <!-- 核心JavaScript文件 -->
+    <script src="assets/js/core.js"></script>
+    <script src="assets/js/device-simulator.js"></script>
+    <script src="assets/js/menu-management.js"></script>
+    <script src="assets/js/application.js"></script>
+    
+    <!-- 页面特定脚本 -->
+    {{PAGE_SCRIPTS}}
+
+    <script>
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', async function() {
+            const pageLoader = document.getElementById('pageLoader');
+            
+            try {
+                // 初始化模板引擎和组件加载器
+                const templateEngine = new BrainBaseCore.TemplateEngine();
+                const componentLoader = new BrainBaseCore.ComponentLoader(templateEngine);
+                const layoutManager = new BrainBaseCore.LayoutManager();
+                
+                // 设置模板数据
+                templateEngine.setData({
+                    SITE_NAME: '{{SITE_NAME}}',
+                    USER_NAME: '{{USER_NAME}}',
+                    PAGE_TITLE: '{{PAGE_TITLE}}'
+                });
+                
+                // 加载组件
+                await componentLoader.loadComponents([
+                    { name: 'header', target: '#headerContainer' },
+                    { name: 'sidebar', target: '#sidebarContainer' }
+                ]);
+                
+                // 初始化应用程序
+                if (window.BrainBaseApp) {
+                    window.BrainBaseApp.init({
+                        templateEngine,
+                        componentLoader,
+                        layoutManager
+                    });
+                }
+                
+                // 隐藏加载器
+                pageLoader.classList.add('loader-hiding');
+                setTimeout(() => {
+                    pageLoader.style.display = 'none';
+                }, 300);
+                
+                console.log('🎉 页面初始化完成');
+                
+            } catch (error) {
+                console.error('❌ 页面初始化失败:', error);
+                
+                // 显示错误信息
+                pageLoader.innerHTML = `
+                    <div style="text-align: center; color: #e74c3c;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 12px;"></i>
+                        <div style="font-size: 16px; margin-bottom: 8px;">页面加载失败</div>
+                        <div style="font-size: 14px; opacity: 0.7;">${error.message}</div>
+                        <button onclick="location.reload()" style="margin-top: 16px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            重新加载
+                        </button>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html> 

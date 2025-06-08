@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模板示例 - BrainBase</title>
+    
+    <!-- 外部依赖 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- 自定义样式文件 -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/device-simulator.css">
+    <link rel="stylesheet" href="assets/css/menu-management.css">
+</head>
+<body class="bg-gray-50">
+    <!-- 页面加载器 -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">正在加载页面...</div>
+    </div>
+
+    <!-- 顶部导航栏容器 -->
+    <div id="headerContainer"></div>
+
+    <!-- 移动端遮罩层 -->
+    <div id="mobileOverlay" class="mobile-overlay"></div>
+    
+    <div class="flex pt-16">
+        <!-- 侧边栏容器 -->
+        <div id="sidebarContainer"></div>
+
+        <!-- 主内容区域 -->
+        <main class="gitee-content p-6" id="mainContent">
+            <!-- 页面标题 -->
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">模板系统示例</h1>
+                <p class="text-gray-600">基于新模板系统构建的示例页面</p>
+            </div>
+
+            <!-- 功能概览卡片 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">组件化</h3>
+                            <p class="text-gray-600 text-sm">模块化组件</p>
+                        </div>
+                        <div class="p-3 bg-blue-100 rounded-lg">
+                            <i class="fas fa-cubes text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">模板语法</h3>
+                            <p class="text-gray-600 text-sm">{{}} 数据绑定</p>
+                        </div>
+                        <div class="p-3 bg-green-100 rounded-lg">
+                            <i class="fas fa-code text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">布局管理</h3>
+                            <p class="text-gray-600 text-sm">响应式设计</p>
+                        </div>
+                        <div class="p-3 bg-purple-100 rounded-lg">
+                            <i class="fas fa-cogs text-purple-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">设备模拟</h3>
+                            <p class="text-gray-600 text-sm">多端适配</p>
+                        </div>
+                        <div class="p-3 bg-orange-100 rounded-lg">
+                            <i class="fas fa-mobile-alt text-orange-600 text-xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 快捷操作 -->
+            <div class="bg-white rounded-lg shadow p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">快捷操作</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <button onclick="toggleSidebar()" class="flex items-center justify-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-bars text-gray-600 mr-2"></i>
+                        <span class="text-gray-700">切换侧边栏</span>
+                    </button>
+                    
+                    <button onclick="toggleTheme()" class="flex items-center justify-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-moon text-gray-600 mr-2"></i>
+                        <span class="text-gray-700">切换主题</span>
+                    </button>
+                    
+                    <button onclick="showLayoutSettings()" class="flex items-center justify-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-cog text-gray-600 mr-2"></i>
+                        <span class="text-gray-700">布局设置</span>
+                    </button>
+                    
+                    <button onclick="showNotification('success')" class="flex items-center justify-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-bell text-gray-600 mr-2"></i>
+                        <span class="text-gray-700">测试通知</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 系统状态 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">系统状态</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">模板引擎</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">运行中</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">组件加载器</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">运行中</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">布局管理器</span>
+                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">运行中</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">设备模拟器</span>
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">就绪</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">快捷键提示</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">切换侧边栏</span>
+                            <kbd class="px-2 py-1 bg-gray-100 text-gray-700 rounded">Ctrl + B</kbd>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">切换主题</span>
+                            <kbd class="px-2 py-1 bg-gray-100 text-gray-700 rounded">Ctrl + Shift + T</kbd>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">菜单管理</span>
+                            <kbd class="px-2 py-1 bg-gray-100 text-gray-700 rounded">Ctrl + M</kbd>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">关闭弹窗</span>
+                            <kbd class="px-2 py-1 bg-gray-100 text-gray-700 rounded">Esc</kbd>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 页面模拟容器 -->
+    <div class="page-simulator-container" id="pageSimulatorContainer">
+        <!-- 设备控制按钮 -->
+        <div class="device-controls" id="deviceControls">
+            <button class="device-control-btn" id="rotateDevice" data-tooltip="旋转设备">
+                <i class="fas fa-redo"></i>
+            </button>
+            <button class="device-control-btn" id="closeSimulator" data-tooltip="关闭模拟器">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- 设备信息 -->
+        <div class="device-info" id="deviceInfo">
+            设备信息
+        </div>
+        
+        <div class="device-frame" id="deviceFrame">
+            <iframe class="device-screen" id="deviceScreen" src=""></iframe>
+        </div>
+    </div>
+
+    <!-- 菜单管理模态框 -->
+    <div class="menu-management-modal" id="menuManagementModal">
+        <div class="menu-management-overlay" id="menuManagementOverlay"></div>
+        <div class="menu-management-content">
+            <div class="menu-management-header">
+                <h3>
+                    <i class="fas fa-cogs"></i>
+                    菜单设置管理
+                </h3>
+                <button class="menu-management-close" id="menuManagementClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="menu-management-body">
+                <!-- 图钉显示设置 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-thumbtack" style="color: #dc3545;"></i>
+                        侧边栏图钉显示
+                    </h4>
+                    <p class="menu-management-desc">
+                        控制侧边栏导航按钮右下角的小图钉是否显示。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-outline" id="enablePinsBtn">
+                            <i class="fas fa-eye"></i>
+                            启用图钉显示
+                        </button>
+                        <button class="btn btn-outline" id="disablePinsBtn">
+                            <i class="fas fa-eye-slash"></i>
+                            禁用图钉显示
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 收藏管理 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-star" style="color: #fbbf24;"></i>
+                        收藏管理
+                    </h4>
+                    <p class="menu-management-desc">
+                        管理侧边栏显示的收藏功能。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-outline" id="resetStarsBtn">
+                            <i class="fas fa-undo"></i>
+                            重置收藏
+                        </button>
+                        <button class="btn btn-outline" id="showStarredBtn">
+                            <i class="fas fa-list"></i>
+                            查看收藏列表
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知容器 -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <!-- 核心JavaScript文件 -->
+    <script src="assets/js/core.js"></script>
+    <script src="assets/js/device-simulator.js"></script>
+    <script src="assets/js/menu-management.js"></script>
+    <script src="assets/js/application.js"></script>
+
+    <script>
+        // 演示函数
+        function showNotification(type) {
+            const messages = {
+                success: '操作成功完成！',
+                error: '操作失败，请重试。',
+                warning: '这是一个警告信息。',
+                info: '这是一个提示信息。'
+            };
+            
+            if (window.BrainBaseApp && window.BrainBaseApp.notify) {
+                window.BrainBaseApp.notify.show(messages[type], type, 3000);
+            }
+        }
+        
+        function toggleSidebar() {
+            if (window.BrainBaseApp && window.BrainBaseApp.layoutManager) {
+                window.BrainBaseApp.layoutManager.toggleSidebar();
+            }
+        }
+        
+        function toggleTheme() {
+            if (window.BrainBaseApp && window.BrainBaseApp.layoutManager) {
+                window.BrainBaseApp.layoutManager.toggleTheme();
+            }
+        }
+        
+        function showLayoutSettings() {
+            if (window.BrainBaseApp && window.BrainBaseApp.layoutManager) {
+                window.BrainBaseApp.layoutManager.showSettingsPanel();
+            }
+        }
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', async function() {
+            const pageLoader = document.getElementById('pageLoader');
+            
+            try {
+                // 初始化模板引擎和组件加载器
+                const templateEngine = new BrainBaseCore.TemplateEngine();
+                const componentLoader = new BrainBaseCore.ComponentLoader(templateEngine);
+                const layoutManager = new BrainBaseCore.LayoutManager();
+                
+                // 设置模板数据
+                templateEngine.setData({
+                    SITE_NAME: 'BrainBase',
+                    USER_NAME: '管理员',
+                    PAGE_TITLE: '模板示例'
+                });
+                
+                // 加载组件
+                await componentLoader.loadComponents([
+                    { name: 'header', target: '#headerContainer' },
+                    { name: 'sidebar', target: '#sidebarContainer' }
+                ]);
+                
+                // 初始化应用程序
+                if (window.BrainBaseApp) {
+                    await window.BrainBaseApp.init({
+                        templateEngine,
+                        componentLoader,
+                        layoutManager
+                    });
+                }
+                
+                // 隐藏加载器
+                pageLoader.classList.add('loader-hiding');
+                setTimeout(() => {
+                    pageLoader.style.display = 'none';
+                }, 300);
+                
+                console.log('🎉 页面初始化完成');
+                
+            } catch (error) {
+                console.error('❌ 页面初始化失败:', error);
+                
+                // 显示错误信息
+                pageLoader.innerHTML = `
+                    <div style="text-align: center; color: #e74c3c;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 12px;"></i>
+                        <div style="font-size: 16px; margin-bottom: 8px;">页面加载失败</div>
+                        <div style="font-size: 14px; opacity: 0.7;">${error.message}</div>
+                        <button onclick="location.reload()" style="margin-top: 16px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            重新加载
+                        </button>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html> 

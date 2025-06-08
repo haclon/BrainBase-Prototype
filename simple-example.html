@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统管理 - BrainBase</title>
+    
+    <!-- 外部依赖 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- 自定义样式文件 -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/device-simulator.css">
+    <link rel="stylesheet" href="assets/css/menu-management.css">
+</head>
+<body class="bg-gray-50">
+    <!-- 页面加载器 -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">正在加载页面...</div>
+    </div>
+
+    <!-- 顶部导航栏容器 -->
+    <div id="headerContainer"></div>
+
+    <!-- 移动端遮罩层 -->
+    <div id="mobileOverlay" class="mobile-overlay"></div>
+    
+    <div class="flex pt-16">
+        <!-- 侧边栏容器 -->
+        <div id="sidebarContainer"></div>
+
+        <!-- 主内容区域 -->
+        <main class="gitee-content p-6" id="mainContent">
+            <!-- 页面标题 -->
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">系统管理</h1>
+                <p class="text-gray-600">管理系统配置和权限设置</p>
+            </div>
+
+            <!-- 卡片网格 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 用户管理卡片 -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-blue-100 rounded-lg">
+                            <i class="fas fa-users text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">用户管理</h3>
+                            <p class="text-gray-600 text-sm">管理系统用户账户</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-blue-600">156</span>
+                            <span class="text-sm text-gray-500">活跃用户</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 角色权限卡片 -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-green-100 rounded-lg">
+                            <i class="fas fa-user-tag text-green-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">角色权限</h3>
+                            <p class="text-gray-600 text-sm">配置用户角色和权限</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-green-600">8</span>
+                            <span class="text-sm text-gray-500">角色类型</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 系统日志卡片 -->
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-purple-100 rounded-lg">
+                            <i class="fas fa-file-alt text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-gray-900">系统日志</h3>
+                            <p class="text-gray-600 text-sm">查看系统操作记录</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-purple-600">1.2K</span>
+                            <span class="text-sm text-gray-500">今日操作</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 最近活动 -->
+            <div class="mt-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">最近活动</h2>
+                <div class="bg-white rounded-lg shadow">
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user-plus text-blue-600 text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">新用户注册</p>
+                                    <p class="text-sm text-gray-500">张三 注册了系统账户</p>
+                                </div>
+                                <span class="text-sm text-gray-400">2分钟前</span>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-shield-alt text-green-600 text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">权限更新</p>
+                                    <p class="text-sm text-gray-500">管理员角色权限已更新</p>
+                                </div>
+                                <span class="text-sm text-gray-400">5分钟前</span>
+                            </div>
+                            
+                            <div class="flex items-center space-x-4">
+                                <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-cog text-yellow-600 text-sm"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">系统配置</p>
+                                    <p class="text-sm text-gray-500">系统配置已更新</p>
+                                </div>
+                                <span class="text-sm text-gray-400">10分钟前</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 页面模拟容器 -->
+    <div class="page-simulator-container" id="pageSimulatorContainer">
+        <!-- 设备控制按钮 -->
+        <div class="device-controls" id="deviceControls">
+            <button class="device-control-btn" id="rotateDevice" data-tooltip="旋转设备">
+                <i class="fas fa-redo"></i>
+            </button>
+            <button class="device-control-btn" id="closeSimulator" data-tooltip="关闭模拟器">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <!-- 设备信息 -->
+        <div class="device-info" id="deviceInfo">
+            设备信息
+        </div>
+        
+        <div class="device-frame" id="deviceFrame">
+            <iframe class="device-screen" id="deviceScreen" src=""></iframe>
+        </div>
+    </div>
+
+    <!-- 菜单管理模态框 -->
+    <div class="menu-management-modal" id="menuManagementModal">
+        <div class="menu-management-overlay" id="menuManagementOverlay"></div>
+        <div class="menu-management-content">
+            <div class="menu-management-header">
+                <h3>
+                    <i class="fas fa-cogs"></i>
+                    菜单设置管理
+                </h3>
+                <button class="menu-management-close" id="menuManagementClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="menu-management-body">
+                <!-- 图钉显示设置 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-thumbtack" style="color: #dc3545;"></i>
+                        侧边栏图钉显示
+                    </h4>
+                    <p class="menu-management-desc">
+                        控制侧边栏导航按钮右下角的小图钉是否显示。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-outline" id="enablePinsBtn">
+                            <i class="fas fa-eye"></i>
+                            启用图钉显示
+                        </button>
+                        <button class="btn btn-outline" id="disablePinsBtn">
+                            <i class="fas fa-eye-slash"></i>
+                            禁用图钉显示
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 收藏管理 -->
+                <div class="menu-management-section">
+                    <h4>
+                        <i class="fas fa-star" style="color: #fbbf24;"></i>
+                        收藏管理
+                    </h4>
+                    <p class="menu-management-desc">
+                        管理侧边栏显示的收藏功能。
+                    </p>
+                    <div class="menu-management-actions">
+                        <button class="btn btn-outline" id="resetStarsBtn">
+                            <i class="fas fa-undo"></i>
+                            重置收藏
+                        </button>
+                        <button class="btn btn-outline" id="showStarredBtn">
+                            <i class="fas fa-list"></i>
+                            查看收藏列表
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知容器 -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <!-- 核心JavaScript文件 -->
+    <script src="assets/js/core.js"></script>
+    <script src="assets/js/device-simulator.js"></script>
+    <script src="assets/js/menu-management.js"></script>
+    <script src="assets/js/application.js"></script>
+
+    <script>
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', async function() {
+            const pageLoader = document.getElementById('pageLoader');
+            
+            try {
+                // 初始化模板引擎和组件加载器
+                const templateEngine = new BrainBaseCore.TemplateEngine();
+                const componentLoader = new BrainBaseCore.ComponentLoader(templateEngine);
+                const layoutManager = new BrainBaseCore.LayoutManager();
+                
+                // 设置模板数据
+                templateEngine.setData({
+                    SITE_NAME: 'BrainBase',
+                    USER_NAME: '管理员',
+                    PAGE_TITLE: '系统管理'
+                });
+                
+                // 加载组件
+                await componentLoader.loadComponents([
+                    { name: 'header', target: '#headerContainer' },
+                    { name: 'sidebar', target: '#sidebarContainer' }
+                ]);
+                
+                // 初始化应用程序
+                if (window.BrainBaseApp) {
+                    await window.BrainBaseApp.init({
+                        templateEngine,
+                        componentLoader,
+                        layoutManager
+                    });
+                }
+                
+                // 隐藏加载器
+                pageLoader.classList.add('loader-hiding');
+                setTimeout(() => {
+                    pageLoader.style.display = 'none';
+                }, 300);
+                
+                console.log('🎉 页面初始化完成');
+                
+            } catch (error) {
+                console.error('❌ 页面初始化失败:', error);
+                
+                // 显示错误信息
+                pageLoader.innerHTML = `
+                    <div style="text-align: center; color: #e74c3c;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 12px;"></i>
+                        <div style="font-size: 16px; margin-bottom: 8px;">页面加载失败</div>
+                        <div style="font-size: 14px; opacity: 0.7;">${error.message}</div>
+                        <button onclick="location.reload()" style="margin-top: 16px; padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            重新加载
+                        </button>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html> 
